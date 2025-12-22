@@ -1475,11 +1475,31 @@ Users can now integrate this MCP server and get:
 - **Security Analysis**: Code review and vulnerability detection
 - **Testing Frameworks**: Comprehensive test generation
 
-## 📖 Documentation Indexing
+## 📖 Documentation
+
+### **For AI Assistants**
+
+**📘 [AI Usage Guide](./AI_USAGE_GUIDE.md)** - Complete guide for AI assistants on how to use TON MCP at its fullest potential.
+
+This comprehensive guide includes:
+- All 16 tools with detailed usage patterns
+- 3 AI prompts and when to use them
+- 4 resource categories with access patterns
+- Best practices for combining tools
+- Complete workflow examples (6+ scenarios)
+- Search strategies and code generation patterns
+- Common use cases with step-by-step solutions
+- Tips for maximum effectiveness
+
+**AI assistants should read this guide to provide the best TON development assistance!**
+
+---
+
+### **Documentation Indexing**
 
 The TON MCP includes a comprehensive documentation indexer that crawls **ALL** of docs.ton.org (not just a handful of pages).
 
-### **How It Works**
+#### **How It Works**
 
 1. **Comprehensive Crawler** - Visits all pages on docs.ton.org (up to 500 pages)
 2. **Smart Categorization** - Automatically categorizes content (smart-contracts, languages, tma, tokens, etc.)
