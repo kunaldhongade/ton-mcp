@@ -30,7 +30,6 @@
     "files": [
         "dist",
         "README.md",
-        "AI_HELPER_GUIDE.md",
         "package.json",
         "docs-index.json"
     ],
