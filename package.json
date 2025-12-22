@@ -43,16 +43,6 @@
         "prepare-publish": "node scripts/prepare-publish.js",
         "prepublishOnly": "npm run prepare-publish"
     },
-    "keywords": [
-        "ton",
-        "blockchain",
-        "mcp",
-        "ai",
-        "development",
-        "documentation"
-    ],
-    "author": "TON Community",
-    "license": "MIT",
     "dependencies": {
         "@modelcontextprotocol/sdk": "^0.4.0",
         "@ton/core": "^0.56.0",
