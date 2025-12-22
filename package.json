@@ -1,6 +1,6 @@
 {
     "name": "ton-mcp",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "TON MCP Server - Complete Model Context Protocol server for TON blockchain development. Comprehensive crawler indexes ALL docs.ton.org (500+ pages), live blockchain data, code generation, and Telegram Mini Apps support.",
     "main": "dist/index.js",
     "bin": {
