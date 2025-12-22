@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "ton-mcp": {
+      "command": "ton-mcp",
+      "env": {
+        "TON_NETWORK": "testnet",
+        "TON_API_KEY": "84400a3bc52ab695848b0b8fce38eb6ca754fedcbb4e2e52cb7b8fc914777976",
+        "DEBUG": "true"
+      }
+    }
+  }
+}

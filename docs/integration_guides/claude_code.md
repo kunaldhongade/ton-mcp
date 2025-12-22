@@ -11,8 +11,15 @@
 ### Option 1: Install from npm (Recommended)
 
 ```bash
-# Install globally
+# Install globally from npm
 npm install -g ton-mcp
+
+# Or install from GitHub
+git clone https://github.com/kunaldhongade/ton-mcp.git
+cd ton-mcp
+npm install
+npm run build
+npm link  # Creates global link
 
 # Verify installation
 ton-mcp --help

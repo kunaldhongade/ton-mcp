@@ -18,6 +18,9 @@ This guide helps developers contribute to the TON MCP server and run it locally 
 # Clone the repository
 git clone https://github.com/kunaldhongade/ton-mcp.git
 cd ton-mcp
+npm install
+npm run build
+cd ton-mcp
 
 # Install dependencies
 npm install

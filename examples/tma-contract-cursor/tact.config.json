@@ -1,0 +1,22 @@
+{
+  "projects": [
+    {
+      "name": "Counter",
+      "path": "./contracts/Counter.tact",
+      "output": "./build/Counter"
+    },
+    {
+      "name": "TMAProfile",
+      "path": "./contracts/TMAProfile.tact",
+      "output": "./build/TMAProfile"
+    }
+  ],
+  "options": {
+    "debug": true,
+    "external": true,
+    "ipfsAbiGetter": false,
+    "experimental": {
+      "inline": false
+    }
+  }
+}

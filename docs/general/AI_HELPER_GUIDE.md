@@ -5,11 +5,11 @@ This guide helps AI assistants understand how to effectively use the TON MCP ser
 ## 🎯 Overview
 
 The TON MCP server provides AI assistants with:
-- **Complete TON Documentation Index** (146+ documents)
-- **Live TON Blockchain Data** access
-- **Code Generation** capabilities
-- **Development Workflow** guidance
-- **TMA (Telegram Mini Apps)** specialization
+- **Complete TON Documentation Index** (146+ indexed documents)
+- **Live TON Blockchain Data** access (real-time queries)
+- **Code Generation** capabilities (production-ready contracts & frontends)
+- **Development Workflow** guidance (end-to-end dApp building)
+- **TMA (Telegram Mini Apps)** specialization (complete Web App support)
 
 ## 🔧 Available MCP Tools
 

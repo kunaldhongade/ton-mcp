@@ -62,7 +62,7 @@ tar -czf ton-mcp-v1.0.0.tar.gz dist/ package.json README.md
 2. **Users install via:**
 ```bash
 # Download and extract
-wget https://github.com/ton-community/ton-mcp/releases/download/v1.0.0/ton-mcp-v1.0.0.tar.gz
+wget https://github.com/kunaldhongade/ton-mcp/releases/download/v1.0.0/ton-mcp-v1.0.0.tgz
 tar -xzf ton-mcp-v1.0.0.tar.gz
 cd ton-mcp-v1.0.0
 

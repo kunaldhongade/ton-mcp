@@ -10,11 +10,11 @@ This file demonstrates a complete development session using the TON MCP server.
 
 **AI (with TON MCP):** I'll help you create a complete token swap dApp. Let's start with setting up the project structure.
 
-*[AI uses: create_project_structure with project_type="fullstack-dapp", language="typescript", features=["amm", "wallet-connect"]]*
+*[AI uses: generate_frontend_code with framework="react", features=["wallet-connect", "contract-interaction"]]*
 
 **AI Response:**
 ```
-I've generated a complete project structure for your token swap dApp:
+I've generated React frontend code for your token swap dApp:
 
 📁 token-swap-dapp/
 ├── 📁 contracts/

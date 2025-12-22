@@ -2,17 +2,140 @@
 
 [![npm version](https://badge.fury.io/js/ton-mcp.svg)](https://badge.fury.io/js/ton-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-kunaldhongade%2Fton--mcp-blue)](https://github.com/kunaldhongade/ton-mcp)
 
-A comprehensive Model Context Protocol server that provides end-to-end AI assistance for TON blockchain development. Transform any MCP-compatible AI tool into a complete TON blockchain development assistant.
+TON MCP Server - Complete Model Context Protocol server for TON blockchain development. Provides AI assistants with 146+ indexed documentation pages, live blockchain data access, production-ready code generation, and comprehensive Telegram Mini Apps support.
 
 ## ✨ Features
 
-- **📚 Complete TON Documentation** - 146+ indexed documents covering smart contracts, frontend development, Telegram Mini Apps, and more
+- **📚 Comprehensive Documentation Search** - Indexes **ALL** docs.ton.org (up to 500 pages) with smart categorization, tag extraction, and typo handling
+- **🔍 Intelligent Search** - Query normalization, multi-fallback strategies, and context-aware suggestions for accurate results
 - **🔗 Live TON Blockchain Data** - Real-time account balances, transaction histories, Jetton information, and network status
 - **⚡ Code Generation** - Production-ready smart contracts (Tact/FunC) and frontend components (React/Vanilla)
 - **📱 TMA Specialization** - Complete Telegram Mini Apps support with bot integration and Web App manifests
 - **🚀 Development Workflows** - End-to-end guidance for building dApps, tokens, DeFi protocols, and more
 - **🤖 AI-First Design** - Built specifically for AI-assisted development with comprehensive helper guides
+- **⚡ Fast Startup** - Pre-indexed documentation loads in <1 second (no waiting for web scraping)
+
+## 📦 Installation & Repository
+
+**Repository:** [https://github.com/kunaldhongade/ton-mcp](https://github.com/kunaldhongade/ton-mcp)
+
+### **Option 1: Install Globally (Recommended)**
+```bash
+npm install -g ton-mcp
+```
+
+### **Option 2: Install Locally**
+```bash
+# Clone from GitHub
+git clone https://github.com/kunaldhongade/ton-mcp.git
+cd ton-mcp
+npm install
+npm run build
+```
+
+### **Option 3: Install via Cursor MCP Browser**
+1. Open Cursor Settings
+2. Go to **Cursor Settings** → **MCP** tab
+3. Search for "TON" or look for our server
+4. Click "Add to Cursor" (when available)
+
+## ⚙️ Cursor Configuration
+
+### **Method 1: MCP Settings UI (Easiest)**
+
+1. **Open Cursor Settings** (Cmd/Ctrl + ,)
+2. **Navigate to** Cursor Settings → **MCP** tab
+3. **Click "Add new MCP server"**
+4. **Configure:**
+
+```
+Name: TON MCP
+Type: Command  (stdio transport)
+Command: ton-mcp  (if installed globally) or /path/to/ton-mcp/dist/index.js
+Working Directory: Leave empty (global) or /path/to/ton-mcp
+Environment Variables:
+  TON_NETWORK=testnet
+  TON_API_KEY=your_toncenter_api_key_here
+  DEBUG=true
+```
+
+### **Method 2: mcp.json Configuration**
+
+Create `.cursor/mcp.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "ton-mcp": {
+      "command": "ton-mcp",
+      "env": {
+        "TON_NETWORK": "testnet",
+        "TON_API_KEY": "your_toncenter_api_key_here",
+        "DEBUG": "true"
+      }
+    }
+  }
+}
+```
+
+For local installation:
+```json
+{
+  "mcpServers": {
+    "ton-mcp": {
+      "command": "node",
+      "args": ["${workspaceFolder}/path/to/ton-mcp/dist/index.js"],
+      "env": {
+        "TON_NETWORK": "testnet",
+        "TON_API_KEY": "your_toncenter_api_key_here"
+      }
+    }
+  }
+}
+```
+
+### **Method 3: Global Configuration**
+
+Create `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "ton-mcp": {
+      "command": "ton-mcp",
+      "env": {
+        "TON_NETWORK": "testnet",
+        "TON_API_KEY": "your_toncenter_api_key_here"
+      }
+    }
+  }
+}
+```
+
+## 🧪 Testing in Cursor
+
+### **Restart Cursor**
+After configuration, **completely restart Cursor** for MCP changes to take effect.
+
+### **Test Commands**
+Open a new chat and try:
+
+- **Documentation Search:** `"Search for TON smart contract information"`
+- **Live Blockchain:** `"Check balance of address: EQC8rUZqR_pWV1BylWUlPNBzyiTYVoBEmQkMIQDZXICfnuRr"`
+- **Code Generation:** `"Generate a counter contract in Tact"`
+
+### **Verify Integration**
+- Look for "TON MCP" in the **Available Tools** list
+- AI should automatically use TON MCP tools when relevant
+- Check Cursor output panel for any connection errors
+
+## 📖 Repository & Links
+
+- **GitHub Repository**: [https://github.com/kunaldhongade/ton-mcp](https://github.com/kunaldhongade/ton-mcp)
+- **npm Package**: [https://www.npmjs.com/package/ton-mcp](https://www.npmjs.com/package/ton-mcp)
+- **Issues**: [https://github.com/kunaldhongade/ton-mcp/issues](https://github.com/kunaldhongade/ton-mcp/issues)
 
 ## Prerequisites
 
@@ -61,8 +184,8 @@ npm run build
 
 #### Follow these guides on how to integrate the TON MCP with your preferred interface:
 
-- [Cursor](./integration_guides/cursor.md)
-- [Claude Code](./integration_guides/claude_code.md)
+- [Cursor](./docs/integration_guides/cursor.md)
+- [Claude Code](./docs/integration_guides/claude_code.md)
 
 #### Quick Setup Examples:
 
@@ -1314,12 +1437,88 @@ Users can now integrate this MCP server and get:
 5. **Comprehensive**: Covers smart contracts, frontends, TMAs, and deployment
 
 **🎯 Next Steps for Users:**
-1. `git clone <repository-url>`
+1. `git clone https://github.com/kunaldhongade/ton-mcp.git`
 2. `cd ton-mcp && npm install && npm run build`
 3. Configure in Cursor/Claude Code settings
 4. Start asking TON-specific development questions!
 
-**This TON MCP server successfully bridges the gap between AI assistance and practical TON blockchain development. 🚀**</contents>
+**This TON MCP server successfully bridges the gap between AI assistance and practical TON blockchain development. 🚀**
+
+## 📊 What TON MCP Provides
+
+### 🤖 **AI Assistant Integration**
+- **Cursor**: Native MCP server support with one-click installation
+- **Claude Code**: mcp.json configuration for seamless integration
+- **Any MCP-Compatible Tool**: Standard protocol support
+
+### 📚 **Comprehensive Documentation**
+- **146+ Indexed Pages**: Complete TON ecosystem documentation
+- **Smart Search**: AI-powered relevance ranking and context
+- **Categories**: Smart contracts, frontend, TMAs, APIs, best practices
+- **Real-time Updates**: Current TON blockchain information
+
+### 🔗 **Live Blockchain Data**
+- **Account Queries**: Real-time balance, state, and transaction data
+- **Token Information**: Jetton metadata, supply, holders
+- **Network Status**: Gas prices, block information, validator data
+- **Transaction History**: Complete transaction analysis and debugging
+
+### ⚡ **Code Generation Engine**
+- **Smart Contracts**: Tact and FunC production-ready code
+- **Frontend Components**: React/Vanilla.js with TON Connect integration
+- **Full-Stack dApps**: Complete application templates
+- **Telegram Mini Apps**: Web App manifests and bot integration
+
+### 🚀 **Development Workflows**
+- **Project Scaffolding**: Automated project structure creation
+- **Deployment Scripts**: Mainnet/testnet deployment automation
+- **Security Analysis**: Code review and vulnerability detection
+- **Testing Frameworks**: Comprehensive test generation
+
+## 📖 Documentation Indexing
+
+The TON MCP includes a comprehensive documentation indexer that crawls **ALL** of docs.ton.org (not just a handful of pages).
+
+### **How It Works**
+
+1. **Comprehensive Crawler** - Visits all pages on docs.ton.org (up to 500 pages)
+2. **Smart Categorization** - Automatically categorizes content (smart-contracts, languages, tma, tokens, etc.)
+3. **Tag Extraction** - Identifies relevant keywords and technical terms
+4. **Persistent Storage** - Saves to `docs-index.json` for fast startup
+5. **Intelligent Search** - Handles typos, provides suggestions, ranks results
+
+### **Running the Indexer**
+
+To create a fresh index of all TON documentation:
+
+```bash
+# Navigate to the project
+cd /path/to/ton-mcp
+
+# Run the comprehensive indexer (takes 5-10 minutes)
+npm run index-docs
+```
+
+This will:
+- Crawl docs.ton.org
+- Index up to 500 pages
+- Save to `docs-index.json` (2-5 MB)
+- Show progress and statistics
+
+**When to re-index:**
+- Weekly or monthly for latest docs
+- When TON documentation is updated
+- When index file is missing
+
+**For more details**, see [`docs/general/INDEXING_GUIDE.md`](docs/general/INDEXING_GUIDE.md) and [`docs/general/COMPREHENSIVE_INDEXING.md`](docs/general/COMPREHENSIVE_INDEXING.md).
+
+## 🔗 Repository Information
+
+**GitHub:** [https://github.com/kunaldhongade/ton-mcp](https://github.com/kunaldhongade/ton-mcp)  
+**npm:** [https://www.npmjs.com/package/ton-mcp](https://www.npmjs.com/package/ton-mcp)  
+**Author:** Kunal Dhongade  
+**License:** MIT  
+**Version:** 1.0.0</contents>
 </xai:function_call### 6. Install dependencies and test setup
 <xai:function_call name="run_terminal_cmd">
 <parameter name="command">cd /Users/kunal/ton-mcp && npm install

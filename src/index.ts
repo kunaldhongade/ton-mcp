@@ -15,13 +15,20 @@ import {
 import { z } from "zod";
 
 import { config } from "./config.js";
+import { deploymentService } from "./services/deployment.js";
+import { projectScaffoldService } from "./services/project-scaffold.js";
 import { searchIndexService, SearchResult } from "./services/search-index.js";
+import { tolkCompilerService } from "./services/tolk-compiler.js";
 import {
   JettonInfo,
   TonAccountInfo,
   tonApiService,
   TonTransaction,
 } from "./services/ton-api.js";
+import {
+  getAllTolkTemplateNames,
+  getTolkTemplate,
+} from "./templates/tolk-contracts.js";
 import {
   getAvailableHowToResources,
   readAllMarkdownFromDirectories,
@@ -161,16 +168,17 @@ class TonMcpServer {
                     "wallet",
                     "jetton",
                     "nft",
-                    "amm",
-                    "staking",
                     "dao",
+                    "staking",
+                    "multisig",
                   ],
                 },
                 language: {
                   type: "string",
-                  description: "Programming language",
-                  enum: ["tact", "func"],
-                  default: "tact",
+                  description:
+                    "Programming language (tolk is recommended - new modern language)",
+                  enum: ["tact", "func", "tolk"],
+                  default: "tolk",
                 },
               },
               required: ["contract_type"],
@@ -200,6 +208,168 @@ class TonMcpServer {
                 },
               },
               required: ["features"],
+            },
+          },
+          {
+            name: "compile_tolk_contract",
+            description:
+              "Compile Tolk smart contract to BOC (requires tolk compiler installed)",
+            inputSchema: {
+              type: "object",
+              properties: {
+                source_code: {
+                  type: "string",
+                  description: "Tolk source code to compile",
+                },
+                contract_name: {
+                  type: "string",
+                  description: "Name of the contract",
+                  default: "contract",
+                },
+              },
+              required: ["source_code"],
+            },
+          },
+          {
+            name: "validate_tolk_syntax",
+            description:
+              "Validate Tolk smart contract syntax without compiling",
+            inputSchema: {
+              type: "object",
+              properties: {
+                source_code: {
+                  type: "string",
+                  description: "Tolk source code to validate",
+                },
+              },
+              required: ["source_code"],
+            },
+          },
+          {
+            name: "generate_deployment_script",
+            description: "Generate deployment script for TON smart contract",
+            inputSchema: {
+              type: "object",
+              properties: {
+                network: {
+                  type: "string",
+                  description: "Target network",
+                  enum: ["mainnet", "testnet"],
+                  default: "testnet",
+                },
+                contract_code: {
+                  type: "string",
+                  description: "Compiled contract code (hex)",
+                },
+                value: {
+                  type: "string",
+                  description: "Amount of TON to send with deployment",
+                  default: "0.05",
+                },
+              },
+              required: ["contract_code"],
+            },
+          },
+          {
+            name: "create_ton_project",
+            description:
+              "Create a complete TON project scaffold (smart contract, TMA, or full-stack dApp)",
+            inputSchema: {
+              type: "object",
+              properties: {
+                project_name: {
+                  type: "string",
+                  description: "Name of the project",
+                },
+                project_type: {
+                  type: "string",
+                  description: "Type of project to create",
+                  enum: ["smart-contract", "tma", "dapp-fullstack"],
+                },
+                language: {
+                  type: "string",
+                  description: "Smart contract language",
+                  enum: ["tolk", "tact", "func"],
+                  default: "tolk",
+                },
+                framework: {
+                  type: "string",
+                  description: "Frontend framework (for TMA/dApp)",
+                  enum: ["react", "next", "vanilla"],
+                  default: "react",
+                },
+              },
+              required: ["project_name", "project_type"],
+            },
+          },
+          {
+            name: "deploy_contract",
+            description:
+              "Deploy smart contract to TON blockchain (testnet or mainnet)",
+            inputSchema: {
+              type: "object",
+              properties: {
+                network: {
+                  type: "string",
+                  description: "Target network",
+                  enum: ["mainnet", "testnet"],
+                  default: "testnet",
+                },
+                project_path: {
+                  type: "string",
+                  description: "Path to project directory (uses Blueprint)",
+                },
+                contract_code: {
+                  type: "string",
+                  description:
+                    "Compiled contract code (base64) - alternative to project_path",
+                },
+                value: {
+                  type: "string",
+                  description: "Amount of TON for deployment",
+                  default: "0.1",
+                },
+              },
+            },
+          },
+          {
+            name: "check_deployment_status",
+            description: "Check if a contract is deployed and get its status",
+            inputSchema: {
+              type: "object",
+              properties: {
+                contract_address: {
+                  type: "string",
+                  description: "Contract address to check",
+                },
+                network: {
+                  type: "string",
+                  description: "Network to check",
+                  enum: ["mainnet", "testnet"],
+                  default: "testnet",
+                },
+              },
+              required: ["contract_address"],
+            },
+          },
+          {
+            name: "get_deployment_guide",
+            description: "Get step-by-step deployment guide for a contract",
+            inputSchema: {
+              type: "object",
+              properties: {
+                contract_name: {
+                  type: "string",
+                  description: "Name of the contract",
+                },
+                network: {
+                  type: "string",
+                  description: "Target network",
+                  enum: ["mainnet", "testnet"],
+                  default: "testnet",
+                },
+              },
+              required: ["contract_name"],
             },
           },
 
@@ -250,6 +420,20 @@ class TonMcpServer {
             return await this.handleGenerateContractCode(args);
           case "generate_frontend_code":
             return await this.handleGenerateFrontendCode(args);
+          case "compile_tolk_contract":
+            return await this.handleCompileTolk(args);
+          case "validate_tolk_syntax":
+            return await this.handleValidateTolk(args);
+          case "generate_deployment_script":
+            return await this.handleGenerateDeploymentScript(args);
+          case "create_ton_project":
+            return await this.handleCreateProject(args);
+          case "deploy_contract":
+            return await this.handleDeployContract(args);
+          case "check_deployment_status":
+            return await this.handleCheckDeploymentStatus(args);
+          case "get_deployment_guide":
+            return await this.handleGetDeploymentGuide(args);
           case "list_ton_resources":
             return await this.handleListResources(args);
           case "get_specific_ton_resource":
@@ -381,11 +565,40 @@ class TonMcpServer {
       });
 
       if (results.length === 0) {
+        // Provide helpful suggestions based on common queries
+        const suggestions: Record<string, string> = {
+          tolk: 'Did you mean "Tact"? Tact is the recommended programming language for TON smart contracts. Try searching for "Tact programming language" or "Tact language".',
+          talk: 'Did you mean "Tact"? Tact is the programming language for TON. Try searching for "Tact".',
+          "ton language":
+            'TON uses Tact and FunC programming languages. Try searching for "Tact" or "FunC".',
+          "programming language":
+            'TON supports Tact (recommended) and FunC languages. Try searching for "Tact" or "FunC".',
+        };
+
+        const lowerQuery = query.toLowerCase();
+        let suggestion = "";
+        for (const [key, value] of Object.entries(suggestions)) {
+          if (lowerQuery.includes(key)) {
+            suggestion = value;
+            break;
+          }
+        }
+
+        const fallbackMessage =
+          suggestion ||
+          `No documentation found for "${query}". Try searching for:\n` +
+            `- "Tact programming language" (TON's recommended language)\n` +
+            `- "FunC language" (TON's low-level language)\n` +
+            `- "Smart contracts"\n` +
+            `- "Jettons" (TON tokens)\n` +
+            `- "TON Connect" (wallet integration)\n` +
+            `\nOr visit https://docs.ton.org/ for complete documentation.`;
+
         return {
           content: [
             {
               type: "text",
-              text: `No documentation found for "${query}". Try rephrasing your query or check available categories.`,
+              text: fallbackMessage,
             },
           ],
         };
@@ -646,8 +859,23 @@ class TonMcpServer {
   }
 
   private async handleGenerateContractCode(args: any) {
-    const { contract_type, language = "tact" } = args;
+    const { contract_type, language = "tolk" } = args;
 
+    // Use Tolk templates if language is tolk
+    if (language === "tolk") {
+      const code = getTolkTemplate(contract_type);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Generated ${contract_type} contract in **Tolk** (TON's modern language):\n\n\`\`\`tolk\n${code}\n\`\`\`\n\n**Next steps:**\n1. Use \`compile_tolk_contract\` to compile this code\n2. Use \`generate_deployment_script\` to create deployment script\n3. Deploy to testnet first for testing`,
+          },
+        ],
+      };
+    }
+
+    // Tact templates (existing code)
     let code = "";
 
     switch (contract_type) {
@@ -776,6 +1004,393 @@ export default App;`;
     };
   }
 
+  private async handleCompileTolk(args: any) {
+    const { source_code, contract_name = "contract" } = args;
+
+    try {
+      const result = await tolkCompilerService.compileTolk(
+        source_code,
+        contract_name
+      );
+
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Tolk Compilation Successful!**\n\n${result.output}\n\n**Output files:**\n- BOC file: \`${result.bocFile}\`\n\n**Next steps:**\n1. Use \`generate_deployment_script\` to create deployment\n2. Test on testnet first\n3. Deploy to mainnet when ready`,
+            },
+          ],
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Compilation Failed**\n\n${result.error}\n\n**Common issues:**\n- Syntax errors in Tolk code\n- Missing tolk compiler (install from: https://github.com/ton-blockchain/tolk)\n- Invalid function signatures`,
+            },
+          ],
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Compilation error: ${error}`,
+          },
+        ],
+      };
+    }
+  }
+
+  private async handleValidateTolk(args: any) {
+    const { source_code } = args;
+
+    try {
+      const result = await tolkCompilerService.validateTolk(source_code);
+
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Syntax Valid!**\n\n${result.output}\n\nYour Tolk code has no syntax errors. Ready to compile!`,
+            },
+          ],
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Syntax Errors Found:**\n\n${result.error}\n\nPlease fix these errors before compilation.`,
+            },
+          ],
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Validation error: ${error}`,
+          },
+        ],
+      };
+    }
+  }
+
+  private async handleGenerateDeploymentScript(args: any) {
+    const { network = "testnet", contract_code, value = "0.05" } = args;
+
+    try {
+      const script = await tolkCompilerService.generateDeploymentScript({
+        network,
+        contractCode: contract_code,
+        value,
+      });
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Generated deployment script for **${network}**:\n\n\`\`\`typescript\n${script}\n\`\`\`\n\n**To deploy:**\n1. Save this script as \`deploy.ts\`\n2. Set MNEMONIC environment variable\n3. Run: \`npx ts-node deploy.ts\`\n\n**Requirements:**\n- @ton/ton\n- @ton/core\n- @ton/crypto`,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Failed to generate deployment script: ${error}`,
+          },
+        ],
+      };
+    }
+  }
+
+  private async handleCreateProject(args: any) {
+    const {
+      project_name,
+      project_type,
+      language = "tact",
+      framework = "react",
+    } = args;
+
+    try {
+      let result;
+
+      if (project_type === "smart-contract") {
+        result = await projectScaffoldService.createSmartContractProject({
+          projectName: project_name,
+          projectType: "smart-contract",
+          language,
+        });
+      } else if (project_type === "tma") {
+        result = await projectScaffoldService.createTMAProject({
+          projectName: project_name,
+          projectType: "tma",
+          framework,
+        });
+      } else {
+        result = await projectScaffoldService.createFullStackProject({
+          projectName: project_name,
+          projectType: "dapp-fullstack",
+          language,
+          framework,
+        });
+      }
+
+      // Format next steps
+      const nextStepsList = result.nextSteps
+        .map((step, i) => `${i + 1}. ${step}`)
+        .join("\n");
+
+      // Get detailed guide
+      const guide = projectScaffoldService.getOfficialToolsGuide(project_type);
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${result.message}
+
+**Official Tool:** ${result.officialTool}
+
+**How to Create:**
+
+${nextStepsList}
+
+---
+
+${guide}
+
+**Ready to build your TON project!** 🚀
+
+After creation, you can use these MCP tools:
+- \`deploy_contract\` - Deploy your contracts
+- \`generate_contract_code\` - Generate more contracts
+- \`search_ton_documentation\` - Get help`,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Failed to create project guide: ${error}`,
+          },
+        ],
+      };
+    }
+  }
+
+  private async handleDeployContract(args: any) {
+    const {
+      network = "testnet",
+      project_path,
+      contract_code,
+      value = "0.1",
+    } = args;
+
+    try {
+      let result;
+
+      if (project_path) {
+        // Deploy using Blueprint
+        result = await deploymentService.deployWithBlueprint(
+          project_path,
+          network
+        );
+      } else if (contract_code) {
+        // Direct deployment
+        const mnemonic = process.env.MNEMONIC;
+        result = await deploymentService.deployContract({
+          network,
+          mnemonic,
+          contractCode: contract_code,
+          value,
+        });
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "❌ Either project_path or contract_code must be provided",
+            },
+          ],
+        };
+      }
+
+      if (result.success) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Contract Deployed Successfully!**
+
+**Network:** ${network}
+**Contract Address:** \`${result.contractAddress}\`
+${
+  result.transactionHash ? `**Transaction:** \`${result.transactionHash}\`` : ""
+}
+
+**Explorer:**
+${result.explorerUrl}
+
+**Next Steps:**
+1. Verify contract on explorer
+2. Test contract functions
+3. Update frontend with contract address
+4. Monitor contract activity
+
+Use \`check_deployment_status\` to verify deployment!`,
+            },
+          ],
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Deployment Failed**
+
+${result.error}
+
+**Troubleshooting:**
+- Check wallet has enough TON (recommended: 0.1 TON)
+- Verify MNEMONIC is set in environment
+- Ensure contract code is valid
+- Try testnet first before mainnet`,
+            },
+          ],
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Deployment error: ${error}`,
+          },
+        ],
+      };
+    }
+  }
+
+  private async handleCheckDeploymentStatus(args: any) {
+    const { contract_address, network = "testnet" } = args;
+
+    try {
+      const status = await deploymentService.getDeploymentStatus(
+        contract_address,
+        network
+      );
+
+      if (status.deployed) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `✅ **Contract is Active**
+
+**Address:** \`${contract_address}\`
+**Network:** ${network}
+**Balance:** ${status.balance} nanoTON
+${
+  status.lastActivity
+    ? `**Last Activity:** ${status.lastActivity.toLocaleString()}`
+    : ""
+}
+
+**Status:** 🟢 Contract is deployed and active
+
+**Explorer:**
+https://${
+                network === "testnet" ? "testnet." : ""
+              }tonviewer.com/${contract_address}`,
+            },
+          ],
+        };
+      } else {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `❌ **Contract Not Found**
+
+**Address:** \`${contract_address}\`
+**Network:** ${network}
+
+**Possible Reasons:**
+- Contract not yet deployed
+- Wrong network (check mainnet vs testnet)
+- Invalid contract address
+- Deployment still pending
+
+Try deploying with \`deploy_contract\` tool!`,
+            },
+          ],
+        };
+      }
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Failed to check deployment status: ${error}`,
+          },
+        ],
+      };
+    }
+  }
+
+  private async handleGetDeploymentGuide(args: any) {
+    const { contract_name, network = "testnet" } = args;
+
+    try {
+      const guide = deploymentService.generateDeploymentGuide(
+        contract_name,
+        network
+      );
+
+      const costs = deploymentService.estimateDeploymentCost();
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${guide}
+
+## Estimated Costs
+
+**Minimum Required:** ${costs.minRequired}
+**Recommended:** ${costs.recommended}
+
+**Breakdown:**
+${Object.entries(costs.breakdown)
+  .map(([key, value]) => `- ${key}: ${value}`)
+  .join("\n")}
+
+Ready to deploy? Use \`deploy_contract\` tool!`,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ Failed to generate deployment guide: ${error}`,
+          },
+        ],
+      };
+    }
+  }
+
   private async handleListResources(args: any) {
     const availableFiles = getAvailableHowToResources();
 
@@ -876,6 +1491,51 @@ Remember: Always verify your approach with MCP tools first!`,
 
 // Export for testing
 export { TonMcpServer };
+
+// CLI argument handling
+const args = process.argv.slice(2);
+
+if (args.includes("--help") || args.includes("-h")) {
+  console.log(`TON MCP Server v1.0.0
+======================
+
+A comprehensive Model Context Protocol server for TON blockchain development.
+
+USAGE:
+  ton-mcp                    Start the MCP server (stdio mode)
+  ton-mcp --help, -h         Show this help message
+
+DESCRIPTION:
+  This MCP server provides AI assistants with comprehensive TON blockchain development tools,
+  including documentation search, live blockchain data, code generation, and development guidance.
+
+FEATURES:
+  📚 146+ indexed TON documentation pages
+  🔗 Live TON blockchain data access
+  ⚡ Production-ready code generation
+  📱 Telegram Mini Apps support
+  🚀 End-to-end dApp development
+
+CONFIGURATION:
+  Set these environment variables:
+  - TON_NETWORK: 'mainnet' or 'testnet' (default: testnet)
+  - TON_API_KEY: Your TON Center API key (required)
+  - TON_API_KEY_ENHANCED: Your TON API key (optional)
+  - DEBUG: 'true' or 'false' (default: false)
+
+INTEGRATION:
+  - Cursor: Add as MCP server in settings
+  - Claude Code: Configure in mcp.json
+  - Other MCP-compatible tools
+
+EXAMPLES:
+  ton-mcp                                    # Start MCP server
+  ton-mcp --help                            # Show this help
+
+For more information, visit: https://github.com/kunaldhongade/ton-mcp
+`);
+  process.exit(0);
+}
 
 // Start the server
 const server = new TonMcpServer();

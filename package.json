@@ -1,7 +1,7 @@
 {
     "name": "ton-mcp",
     "version": "1.0.0",
-    "description": "Comprehensive Model Context Protocol server for TON blockchain development - Build dApps, smart contracts, and Telegram Mini Apps with AI assistance",
+    "description": "TON MCP Server - Complete Model Context Protocol server for TON blockchain development. Comprehensive crawler indexes ALL docs.ton.org (500+ pages), live blockchain data, code generation, and Telegram Mini Apps support.",
     "main": "dist/index.js",
     "bin": {
         "ton-mcp": "dist/index.js"
@@ -31,7 +31,8 @@
         "dist",
         "README.md",
         "AI_HELPER_GUIDE.md",
-        "package.json"
+        "package.json",
+        "docs-index.json"
     ],
     "scripts": {
         "build": "rm -rf dist && tsc && cp -r src/resources dist/",
