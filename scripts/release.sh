@@ -57,6 +57,22 @@ echo ""
 echo -e "${YELLOW}📝 Starting release process...${NC}"
 echo ""
 
+# Calculate what the new version will be
+echo -e "${BLUE}📊 Calculating new version...${NC}"
+case $VERSION_TYPE in
+    patch)
+        NEXT_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print $1"."$2"."$3+1}')
+        ;;
+    minor)
+        NEXT_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print $1"."$2+1".0"}')
+        ;;
+    major)
+        NEXT_VERSION=$(echo $CURRENT_VERSION | awk -F. '{print $1+1".0.0"}')
+        ;;
+esac
+echo -e "${GREEN}✅ Next version will be: ${NEXT_VERSION}${NC}"
+echo ""
+
 # Step 1: Build
 echo -e "${BLUE}📦 Step 1: Building project...${NC}"
 npm run build
@@ -85,17 +101,17 @@ if [[ -n $(git status -s) ]]; then
         git add .
         echo -e "${GREEN}✅ Files staged${NC}"
         
-        # Get commit message
+        # Get commit message (with version prefix)
         echo ""
         echo -e "${BLUE}💾 Creating commit...${NC}"
         echo ""
         echo "Suggested commit message:"
-        echo -e "${YELLOW}  feat: Prepare release with major features${NC}"
+        echo -e "${YELLOW}  ${NEXT_VERSION}: feat: Prepare release with major features${NC}"
         echo ""
-        read -p "Enter commit message (or press Enter for default): " COMMIT_MSG
+        read -p "Enter commit message WITHOUT version prefix (or press Enter for default): " USER_COMMIT_MSG
         
-        if [ -z "$COMMIT_MSG" ]; then
-            COMMIT_MSG="feat: Prepare release with major features
+        if [ -z "$USER_COMMIT_MSG" ]; then
+            COMMIT_MSG="${NEXT_VERSION}: feat: Prepare release with major features
 
 - Official tools integration (Blueprint, @telegram-apps)
 - Tolk language support with 7 contract templates  
@@ -105,10 +121,13 @@ if [[ -n $(git status -s) ]]; then
 - ES module compatibility
 - 360+ documentation pages indexed
 - 20+ MCP tools ready"
+        else
+            # Add version prefix to user's message
+            COMMIT_MSG="${NEXT_VERSION}: ${USER_COMMIT_MSG}"
         fi
         
         git commit -m "$COMMIT_MSG"
-        echo -e "${GREEN}✅ Changes committed${NC}"
+        echo -e "${GREEN}✅ Changes committed with version prefix: ${NEXT_VERSION}${NC}"
     else
         echo -e "${RED}❌ Cannot proceed with uncommitted changes${NC}"
         echo "npm version requires a clean working directory"
