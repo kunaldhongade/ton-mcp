@@ -874,6 +874,9 @@ Remember: Always verify your approach with MCP tools first!`,
   }
 }
 
+// Export for testing
+export { TonMcpServer };
+
 // Start the server
 const server = new TonMcpServer();
 server.run().catch(console.error);

@@ -1,25 +1,76 @@
-# TON MCP (Model Context Protocol)
+# TON MCP
 
-A comprehensive Model Context Protocol server that provides end-to-end AI assistance for TON blockchain development. Unlike the Aptos MCP, this server includes full documentation indexing, project examples, and advanced development tools.
+[![npm version](https://badge.fury.io/js/ton-mcp.svg)](https://badge.fury.io/js/ton-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A comprehensive Model Context Protocol server that provides end-to-end AI assistance for TON blockchain development. Transform any MCP-compatible AI tool into a complete TON blockchain development assistant.
+
+## ✨ Features
+
+- **📚 Complete TON Documentation** - 146+ indexed documents covering smart contracts, frontend development, Telegram Mini Apps, and more
+- **🔗 Live TON Blockchain Data** - Real-time account balances, transaction histories, Jetton information, and network status
+- **⚡ Code Generation** - Production-ready smart contracts (Tact/FunC) and frontend components (React/Vanilla)
+- **📱 TMA Specialization** - Complete Telegram Mini Apps support with bot integration and Web App manifests
+- **🚀 Development Workflows** - End-to-end guidance for building dApps, tokens, DeFi protocols, and more
+- **🤖 AI-First Design** - Built specifically for AI-assisted development with comprehensive helper guides
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/en) (v18 or higher)
+- TON API keys (see setup below)
+
+### Get TON API Keys
+
+1. **TON Center API Key** (Required):
+   - Visit [https://toncenter.com/api/v2/](https://toncenter.com/api/v2/)
+   - Sign up for a free API key
+
+2. **TON API Enhanced Key** (Optional):
+   - Visit [https://tonapi.io/](https://tonapi.io/)
+   - Create an account for enhanced features
 
 ## 🚀 Quick Start - Build TON Apps in Minutes
 
 **Ready to build TON applications with AI assistance?**
 
-### 1. Setup (2 minutes)
+### Option 1: Install from npm (Recommended)
+
 ```bash
-git clone <repository-url>
+# Install globally
+npm install -g ton-mcp
+
+# Configure environment
+echo "TON_NETWORK=testnet" >> ~/.env
+echo "TON_API_KEY=your_toncenter_api_key" >> ~/.env
+
+# Verify installation
+ton-mcp --help
+```
+
+### Option 2: Local Development
+
+```bash
+git clone https://github.com/ton-community/ton-mcp.git
 cd ton-mcp
+npm install
+npm run build
 ./setup-mcp.sh
 ```
 
 ### 2. Integrate with AI Tool (1 minute)
 
+#### Follow these guides on how to integrate the TON MCP with your preferred interface:
+
+- [Cursor](./integration_guides/cursor.md)
+- [Claude Code](./integration_guides/claude_code.md)
+
+#### Quick Setup Examples:
+
 **Cursor:**
-- Settings → MCP → Add server: `node /path/to/ton-mcp/dist/index.js`
+- Settings → MCP → Add server: `ton-mcp` (if installed globally) or `node /path/to/ton-mcp/dist/index.js`
 
 **Claude Code:**
-- Add to `~/.claude/config.json` (see README for details)
+- Add to `~/.claude/config.json` (see integration guide for details)
 
 ### 3. Start Building (Immediate)
 ```
@@ -113,6 +164,85 @@ npm run dev
 npm run build
 npm start
 ```
+
+## 🧪 Testing & Quality Assurance
+
+### Comprehensive Testing Suite
+
+Run the full testing suite to verify all functionality:
+
+```bash
+npm run build
+node test-mcp.js
+```
+
+**Expected Output:**
+```
+🧪 TON MCP Comprehensive Testing Suite
+✅ Passed: 7
+❌ Failed: 0
+📈 Success Rate: 100%
+
+🎉 All tests passed! TON MCP is ready for production.
+🚀 Ready for Cursor/Claude Code integration.
+```
+
+### Manual Testing
+
+Test core functionality:
+
+```bash
+# Build and start server
+npm run build
+npm start
+
+# In another terminal, test server health
+node -e "
+const { TonMcpServer } = require('./dist/index.js');
+console.log('✅ Server loads successfully');
+"
+```
+
+## 🤖 AI Helper Guide
+
+**Critical**: AI assistants must read `AI_HELPER_GUIDE.md` to understand how to effectively use this MCP server. This guide contains:
+
+- **Complete tool documentation** with usage patterns
+- **Development workflow guidance** for TON projects
+- **Best practices** for MCP-first development
+- **Quality assurance** standards
+
+**AI assistants should start every TON development session by consulting the AI Helper Guide!**
+
+## 📋 Configuration Checklist
+
+Before deploying, verify these settings:
+
+### Environment Variables (`.env`)
+```bash
+# Required
+TON_NETWORK=testnet|mainnet
+TON_API_KEY=your_toncenter_api_key
+DEBUG=true|false
+
+# Optional but recommended
+TON_API_KEY_ENHANCED=your_tonapi_key
+TELEGRAM_BOT_TOKEN=your_bot_token
+```
+
+### Dependencies Check
+```bash
+npm install
+npm run build
+node test-mcp.js  # Should show 100% pass rate
+```
+
+### Integration Verification
+- ✅ MCP SDK compatibility (not FastMCP)
+- ✅ Search index loaded (73+ documents)
+- ✅ API services initialized
+- ✅ Code generation working
+- ✅ Documentation access functional
 
 ## Integration with AI Tools
 

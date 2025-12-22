@@ -1,15 +1,48 @@
 {
     "name": "ton-mcp",
     "version": "1.0.0",
-    "description": "Comprehensive Model Context Protocol server for TON blockchain development",
+    "description": "Comprehensive Model Context Protocol server for TON blockchain development - Build dApps, smart contracts, and Telegram Mini Apps with AI assistance",
     "main": "dist/index.js",
+    "module": "dist/index.js",
+    "bin": {
+        "ton-mcp": "dist/index.js"
+    },
+    "keywords": [
+        "ton",
+        "blockchain",
+        "mcp",
+        "ai",
+        "development",
+        "telegram-mini-apps",
+        "smart-contracts",
+        "dapps"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kunaldhongade/ton-mcp"
+    },
+    "homepage": "https://github.com/kunaldhongade/ton-mcp#readme",
+    "bugs": {
+        "url": "https://github.com/kunaldhongade/ton-mcp/issues"
+    },
+    "license": "MIT",
+    "author": "Kunal Dhongade <kunaldhongade1@gmail.com>",
     "type": "module",
+    "files": [
+        "dist",
+        "README.md",
+        "AI_HELPER_GUIDE.md",
+        "package.json"
+    ],
     "scripts": {
         "build": "rm -rf dist && tsc && cp -r src/resources dist/",
         "start": "node dist/index.js",
         "dev": "tsx src/index.ts",
         "watch": "tsx watch src/index.ts",
-        "index-docs": "tsx src/scripts/index-docs.ts"
+        "index-docs": "tsx src/scripts/index-docs.ts",
+        "test": "node test-mcp.js",
+        "prepare-publish": "node scripts/prepare-publish.js",
+        "prepublishOnly": "npm run prepare-publish"
     },
     "keywords": [
         "ton",
@@ -19,10 +52,10 @@
         "development",
         "documentation"
     ],
-    "author": "",
+    "author": "TON Community",
     "license": "MIT",
     "dependencies": {
-        "fastmcp": "^1.27.3",
+        "@modelcontextprotocol/sdk": "^0.4.0",
         "@ton/core": "^0.56.0",
         "@ton/crypto": "^3.3.0",
         "@ton/ton": "^13.11.0",
