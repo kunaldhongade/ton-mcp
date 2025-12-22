@@ -1,9 +1,8 @@
 {
-    "name": "ton-mcp",
+    "name": "ton-mcp-kunal",
     "version": "1.0.0",
     "description": "Comprehensive Model Context Protocol server for TON blockchain development - Build dApps, smart contracts, and Telegram Mini Apps with AI assistance",
     "main": "dist/index.js",
-    "module": "dist/index.js",
     "bin": {
         "ton-mcp": "dist/index.js"
     },
