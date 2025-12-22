@@ -6,39 +6,47 @@
 }
 
 .App-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: rgba(15, 23, 42, 0.9);
   padding: 2rem;
-  border-radius: 15px;
+  border-radius: 20px;
   color: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.telegram-info {
+.network-status, .telegram-info, .wallet-section, .contract-interactions, .mcp-status {
   background: rgba(255, 255, 255, 0.1);
-  padding: 1rem;
-  border-radius: 10px;
-  margin: 1rem 0;
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin: 1.5rem 0;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.wallet-section, .contract-interactions {
-  margin: 2rem 0;
+.gas-prices {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .connect-button {
-  background: #0088cc !important;
+  background: linear-gradient(135deg, #0088cc 0%, #0055aa 100%) !important;
   color: white !important;
   border: none !important;
-  padding: 12px 24px !important;
+  padding: 14px 28px !important;
   font-size: 16px !important;
   border-radius: 25px !important;
   cursor: pointer !important;
   transition: all 0.3s ease !important;
+  font-weight: 600 !important;
 }
 
 .connect-button:hover {
-  background: #006699 !important;
+  background: linear-gradient(135deg, #0055aa 0%, #003366 100%) !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4);
+  box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
 }
 
 .contract-interactions {
@@ -51,13 +59,19 @@
 .counter-section, .profile-section {
   background: rgba(255, 255, 255, 0.1);
   padding: 1.5rem;
-  border-radius: 10px;
+  border-radius: 15px;
   backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .counter-section h2, .profile-section h2 {
   margin-top: 0;
   color: #ffd700;
+}
+
+.profile-info p {
+  margin: 0.5rem 0;
+  text-align: left;
 }
 
 button {
@@ -66,12 +80,23 @@ button {
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
   margin: 0.5rem !important;
   transition: all 0.3s ease !important;
+  font-weight: 500 !important;
 }
 
 button:hover {
   background: rgba(255, 255, 255, 0.3) !important;
   transform: translateY(-1px);
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+}
+
+.mcp-status {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.mcp-status p {
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
 }
 
 @media (max-width: 768px) {
@@ -85,5 +110,9 @@ button:hover {
 
   .App-header {
     padding: 1.5rem;
+  }
+
+  .gas-prices {
+    grid-template-columns: 1fr;
   }
 }

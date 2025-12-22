@@ -4,6 +4,12 @@ import * as fs from "fs";
 import type { FuseResultMatch, IFuseOptions } from "fuse.js";
 import Fuse from "fuse.js";
 import * as path from "path";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export interface DocumentChunk {
   id: string;

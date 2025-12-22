@@ -9,7 +9,7 @@ struct UserProfile {
 
 contract TMAProfile with Deployable {
     owner: Address;
-    profiles: map<Int, UserProfile>; // telegramId -> profile
+    profiles: map<Int, UserProfile>;
     totalUsers: Int = 0;
 
     init(owner: Address) {
@@ -17,14 +17,15 @@ contract TMAProfile with Deployable {
     }
 
     receive("register") {
-        let telegramId = context().value; // Simplified - in real app would parse from message
-        let username = "user_" + telegramId.toString();
+        // Simplified registration - in production would parse telegramId from message
+        let telegramId: Int = 123456789; // Example ID
+        let username: String = "user_" + telegramId.toString();
 
         if (!self.profiles.exists(telegramId)) {
             let profile = UserProfile{
                 telegramId: telegramId,
                 username: username,
-                points: 100, // Welcome bonus
+                points: 100,
                 lastActivity: now()
             };
             self.profiles.set(telegramId, profile);
@@ -33,11 +34,11 @@ contract TMAProfile with Deployable {
     }
 
     receive("updateActivity") {
-        let telegramId = context().value;
+        let telegramId: Int = 123456789; // Example ID
         if (self.profiles.exists(telegramId)) {
             let profile = self.profiles.get(telegramId)!;
             profile.lastActivity = now();
-            profile.points += 10; // Activity reward
+            profile.points += 10;
             self.profiles.set(telegramId, profile);
         }
     }
@@ -48,9 +49,5 @@ contract TMAProfile with Deployable {
 
     get fun getTotalUsers(): Int {
         return self.totalUsers;
-    }
-
-    get fun getLeaderboard(): map<Int, UserProfile> {
-        return self.profiles;
     }
 }
