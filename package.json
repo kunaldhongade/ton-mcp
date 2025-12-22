@@ -40,7 +40,7 @@
         "dev": "tsx src/index.ts",
         "watch": "tsx watch src/index.ts",
         "index-docs": "tsx src/scripts/index-docs.ts",
-        "test": "node test-mcp.js",
+        "test": "node scripts/test-mcp.js",
         "prepare-publish": "node scripts/prepare-publish.js",
         "prepublishOnly": "npm run prepare-publish"
     },
