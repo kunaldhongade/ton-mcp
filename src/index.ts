@@ -1408,27 +1408,73 @@ Ready to deploy? Use \`deploy_contract\` tool!`,
 
   private async handleGetSpecificResource(args: any) {
     const { filename } = args;
-    const availableFiles = getAvailableHowToResources();
 
-    if (!availableFiles.includes(filename)) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Resource '${filename}' not found. Available resources:\n${availableFiles.join(
-              "\n"
-            )}`,
-          },
-        ],
-      };
+    // Search in ALL resource directories (not just how-to)
+    const directories = [
+      "smart-contracts",
+      "how-to",
+      "deployment",
+      "tma",
+      "frontend",
+    ];
+
+    // Try to find the file in each directory
+    for (const dir of directories) {
+      try {
+        const content = await readMarkdownFromDirectory(dir, filename);
+        if (content && content.length > 0) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `# ${filename} (from ${dir}/)\n\n${content}`,
+              },
+            ],
+          };
+        }
+      } catch (error) {
+        // Continue to next directory
+        continue;
+      }
     }
 
-    const content = await readMarkdownFromDirectory("how-to", filename);
+    // File not found in any directory - list all available resources
+    const allAvailableResources: string[] = [];
+
+    try {
+      // Collect all available resources from all directories
+      const fs = await import("fs");
+      const path = await import("path");
+      const resourcesPath = path.join(__dirname, "resources");
+
+      for (const dir of directories) {
+        const dirPath = path.join(resourcesPath, dir);
+        if (fs.existsSync(dirPath)) {
+          const files = fs.readdirSync(dirPath);
+          files.forEach((file) => {
+            if (file.endsWith(".md") && file !== "README.md") {
+              allAvailableResources.push(`${dir}/${file}`);
+            }
+          });
+        }
+      }
+    } catch (error) {
+      // Fallback to legacy method
+      const howToFiles = getAvailableHowToResources();
+      allAvailableResources.push(...howToFiles.map((f) => `how-to/${f}`));
+    }
+
     return {
       content: [
         {
           type: "text",
-          text: content,
+          text: `❌ Resource '${filename}' not found in any directory.\n\n📚 Available resources (${
+            allAvailableResources.length
+          } files):\n\n${allAvailableResources
+            .sort()
+            .join(
+              "\n"
+            )}\n\n💡 Tip: Use the full filename or just the filename (e.g., "tolk_language_guide.md")`,
         },
       ],
     };

@@ -446,17 +446,17 @@ export class SearchIndexService {
   private buildFuseIndex() {
     const options: IFuseOptions<DocumentChunk> = {
       keys: [
-        { name: "title", weight: 0.4 },
-        { name: "content", weight: 0.3 },
-        { name: "tags", weight: 0.25 },
+        { name: "title", weight: 0.5 }, // Increased title importance
+        { name: "tags", weight: 0.25 }, // Increased tag importance
+        { name: "content", weight: 0.2 },
         { name: "category", weight: 0.05 },
       ],
-      threshold: 0.4, // More lenient matching for better results
+      threshold: 0.35, // More strict threshold for better relevance (was 0.4)
       includeMatches: true,
       includeScore: true,
       useExtendedSearch: true,
       ignoreLocation: true, // Don't penalize matches based on position
-      minMatchCharLength: 2, // Match even short terms
+      minMatchCharLength: 3, // Require at least 3 chars for better matching
     };
 
     this.fuseIndex = new Fuse(this.documents, options);
@@ -549,22 +549,54 @@ export class SearchIndexService {
       }
     }
 
-    const finalResults = results
-      .filter(
-        (result) =>
-          !options.minScore ||
-          (result.score && result.score <= options.minScore)
-      )
+    // Filter and process results
+    const processedResults = results
+      .filter((result) => {
+        // Filter by minimum score if specified
+        if (
+          options.minScore &&
+          result.score &&
+          result.score > options.minScore
+        ) {
+          return false;
+        }
+        // CRITICAL: Filter out low-relevance results (Fuse score > 0.7 = low relevance)
+        if (result.score && result.score > 0.7) {
+          return false;
+        }
+        return true;
+      })
       .map((result) => ({
         document: result.item,
         score: result.score || 0,
         matches: result.matches || [],
-      }))
+      }));
+
+    // Sort results with smart boosting
+    const finalResults = processedResults
       .sort((a, b) => {
-        // Boost results from official documentation
-        const aBoost = a.document.url?.includes("docs.ton.org") ? 0.15 : 0;
-        const bBoost = b.document.url?.includes("docs.ton.org") ? 0.15 : 0;
-        return a.score - aBoost - (b.score - bBoost);
+        // 1. Boost results from official docs.ton.org
+        const aIsOfficial = a.document.url?.includes("docs.ton.org") ? 0.15 : 0;
+        const bIsOfficial = b.document.url?.includes("docs.ton.org") ? 0.15 : 0;
+
+        // 2. Boost results with exact tag matches
+        const queryLower = query.toLowerCase();
+        const aHasExactTag = a.document.tags.some((tag) =>
+          queryLower.includes(tag.toLowerCase())
+        )
+          ? 0.1
+          : 0;
+        const bHasExactTag = b.document.tags.some((tag) =>
+          queryLower.includes(tag.toLowerCase())
+        )
+          ? 0.1
+          : 0;
+
+        // 3. Calculate final score with boosts
+        const aFinalScore = a.score - aIsOfficial - aHasExactTag;
+        const bFinalScore = b.score - bIsOfficial - bHasExactTag;
+
+        return aFinalScore - bFinalScore;
       })
       .slice(0, options.limit || 20);
 

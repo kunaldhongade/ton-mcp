@@ -70,14 +70,32 @@ async function indexTonDocumentation() {
         ];
 
         for (const selector of contentSelectors) {
-          const text = $(selector).text().trim();
+          // Remove script, style, and navigation elements before extracting text
+          const $clone = $(selector).clone();
+          $clone
+            .find(
+              "script, style, nav, .nav, .navbar, .sidebar, .menu, .footer, .header, .breadcrumb, noscript"
+            )
+            .remove();
+
+          const text = $clone.text().trim();
           if (text.length > content.length) {
             content = text;
           }
         }
 
-        // Clean up content (remove excessive whitespace)
-        content = content.replace(/\s+/g, " ").trim();
+        // CRITICAL: Clean up HTML artifacts and excessive whitespace
+        content = content
+          .replace(/\s+/g, " ") // Multiple spaces → single space
+          .replace(/\n+/g, "\n") // Multiple newlines → single newline
+          .replace(/\t+/g, " ") // Tabs → spaces
+          .replace(/&nbsp;/g, " ") // HTML entities
+          .replace(/&amp;/g, "&")
+          .replace(/&lt;/g, "<")
+          .replace(/&gt;/g, ">")
+          .replace(/&quot;/g, '"')
+          .replace(/&#39;/g, "'")
+          .trim();
 
         // Log extraction for debugging
         if (content.length === 0) {

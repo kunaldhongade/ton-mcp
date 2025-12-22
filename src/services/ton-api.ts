@@ -58,6 +58,21 @@ export class TonApiService {
    */
   async getAccountInfo(address: string): Promise<TonAccountInfo | null> {
     try {
+      // Validate address format first
+      if (!this.validateAddress(address)) {
+        throw new Error(
+          `❌ Invalid TON address format: ${address}\n\n` +
+          `Troubleshooting:\n` +
+          `✅ TON addresses should be in EQ... or UQ... format\n` +
+          `✅ Example: EQC8rUZqR_pWV1BylWUlPNBzyiTYVoBEmQkMIQDZXICfnuRr\n` +
+          `✅ Use validate_address() to check format before querying\n\n` +
+          `Common issues:\n` +
+          `- Missing prefix (EQ or UQ)\n` +
+          `- Invalid characters\n` +
+          `- Incomplete address (should be 48 chars)`
+        );
+      }
+      
       const response = await this.tonCenterClient.post('', {
         jsonrpc: '2.0',
         id: 1,
@@ -67,6 +82,23 @@ export class TonApiService {
 
       if (response.data?.result) {
         const result = response.data.result;
+        
+        // Check if account exists
+        if (result.state === 'uninitialized' || result.balance === '0') {
+          throw new Error(
+            `⚠️ Account not found or uninitialized: ${address}\n\n` +
+            `This usually means:\n` +
+            `✅ Address format is correct\n` +
+            `❌ Account hasn't received any TON yet\n` +
+            `❌ Account hasn't been initialized\n` +
+            `❌ Wrong network (try mainnet if on testnet, or vice versa)\n\n` +
+            `Next steps:\n` +
+            `1. Verify you're on the correct network (mainnet/testnet)\n` +
+            `2. Check if account has been funded\n` +
+            `3. For new accounts, send some TON to initialize`
+          );
+        }
+        
         return {
           balance: result.balance,
           last_transaction_lt: result.last_transaction_lt,
@@ -76,10 +108,32 @@ export class TonApiService {
           data: result.data
         };
       }
-      return null;
-    } catch (error) {
-      console.error('Failed to get account info:', error);
-      return null;
+      
+      throw new Error(
+        `❌ Failed to get account info for: ${address}\n\n` +
+        `Possible issues:\n` +
+        `- API rate limit exceeded\n` +
+        `- Network connectivity issues\n` +
+        `- TON node temporarily unavailable\n\n` +
+        `Try:\n` +
+        `1. Wait a moment and try again\n` +
+        `2. Check your internet connection\n` +
+        `3. Try a different network (mainnet/testnet)`
+      );
+    } catch (error: any) {
+      // Re-throw our custom errors
+      if (error.message.includes('❌') || error.message.includes('⚠️')) {
+        throw error;
+      }
+      
+      // Generic error
+      throw new Error(
+        `❌ Error querying account: ${error.message}\n\n` +
+        `Troubleshooting:\n` +
+        `1. Verify address format: validate_address("${address}")\n` +
+        `2. Check network status: get_network_stats()\n` +
+        `3. Ensure API keys are configured correctly`
+      );
     }
   }
 
