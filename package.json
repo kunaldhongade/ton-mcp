@@ -1,0 +1,40 @@
+{
+    "name": "ton-mcp",
+    "version": "1.0.0",
+    "description": "Comprehensive Model Context Protocol server for TON blockchain development",
+    "main": "dist/index.js",
+    "type": "module",
+    "scripts": {
+        "build": "rm -rf dist && tsc && cp -r src/resources dist/",
+        "start": "node dist/index.js",
+        "dev": "tsx src/index.ts",
+        "watch": "tsx watch src/index.ts",
+        "index-docs": "tsx src/scripts/index-docs.ts"
+    },
+    "keywords": [
+        "ton",
+        "blockchain",
+        "mcp",
+        "ai",
+        "development",
+        "documentation"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "fastmcp": "^1.27.3",
+        "@ton/core": "^0.56.0",
+        "@ton/crypto": "^3.3.0",
+        "@ton/ton": "^13.11.0",
+        "zod": "^3.24.4",
+        "axios": "^1.6.0",
+        "cheerio": "^1.0.0-rc.12",
+        "fuse.js": "^7.0.0",
+        "markdown-it": "^14.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "tsx": "^4.7.0",
+        "typescript": "^5.3.0"
+    }
+}
