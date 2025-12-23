@@ -42,7 +42,7 @@
         "index-docs": "tsx src/scripts/index-docs.ts",
         "test": "node scripts/test-mcp.js",
         "prepare-publish": "node scripts/prepare-publish.js",
-        "prepublishOnly": "npm run prepare-publish"
+        "release": "./scripts/release.sh"
     },
     "dependencies": {
         "@modelcontextprotocol/sdk": "^0.4.0",
