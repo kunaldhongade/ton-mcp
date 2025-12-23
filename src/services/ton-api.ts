@@ -39,6 +39,8 @@ export interface JettonInfo {
 export class TonApiService {
   private tonCenterClient;
   private tonApiClient;
+  private readonly MAX_RETRIES = 3;
+  private readonly INITIAL_RETRY_DELAY = 1000; // 1 second
 
   constructor() {
     this.tonCenterClient = axios.create({
@@ -51,6 +53,59 @@ export class TonApiService {
       timeout: 10000,
       headers: config.ton.apiKey ? { 'Authorization': `Bearer ${config.ton.apiKey}` } : {}
     });
+  }
+
+  /**
+   * Retry logic with exponential backoff
+   */
+  private async retryWithBackoff<T>(
+    operation: () => Promise<T>,
+    operationName: string,
+    retries: number = this.MAX_RETRIES
+  ): Promise<T> {
+    let lastError: any;
+    
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        return await operation();
+      } catch (error: any) {
+        lastError = error;
+        
+        // Check if error is retryable
+        const isRetryable = 
+          error.response?.status === 429 || // Rate limit
+          error.response?.status === 503 || // Service unavailable
+          error.code === 'ECONNRESET' ||    // Connection reset
+          error.code === 'ETIMEDOUT';       // Timeout
+        
+        // Don't retry on non-retryable errors
+        if (!isRetryable || attempt === retries) {
+          throw error;
+        }
+        
+        // Calculate delay with exponential backoff
+        const delay = this.INITIAL_RETRY_DELAY * Math.pow(2, attempt);
+        const jitter = Math.random() * 0.3 * delay; // Add 30% jitter
+        const totalDelay = Math.floor(delay + jitter);
+        
+        console.error(
+          `⚠️  ${operationName} failed (attempt ${attempt + 1}/${retries + 1}): ${error.message}\n` +
+          `   Retrying in ${totalDelay}ms...`
+        );
+        
+        // Wait before retrying
+        await this.sleep(totalDelay);
+      }
+    }
+    
+    throw lastError;
+  }
+
+  /**
+   * Sleep utility for retry delays
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /**
@@ -73,12 +128,16 @@ export class TonApiService {
         );
       }
       
-      const response = await this.tonCenterClient.post('', {
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'getAddressInformation',
-        params: { address }
-      });
+      // Wrap API call with retry logic
+      const response = await this.retryWithBackoff(
+        () => this.tonCenterClient.post('', {
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'getAddressInformation',
+          params: { address }
+        }),
+        'getAccountInfo'
+      );
 
       if (response.data?.result) {
         const result = response.data.result;
@@ -142,18 +201,22 @@ export class TonApiService {
    */
   async getTransactionHistory(address: string, limit: number = 10): Promise<TonTransaction[]> {
     try {
-      const response = await this.tonCenterClient.post('', {
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'getTransactions',
-        params: {
-          address,
-          limit,
-          lt: undefined,
-          hash: undefined,
-          archival: false
-        }
-      });
+      // Wrap API call with retry logic
+      const response = await this.retryWithBackoff(
+        () => this.tonCenterClient.post('', {
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'getTransactions',
+          params: {
+            address,
+            limit,
+            lt: undefined,
+            hash: undefined,
+            archival: false
+          }
+        }),
+        'getTransactionHistory'
+      );
 
       if (response.data?.result) {
         return response.data.result.map(this.mapTransaction);
@@ -170,11 +233,15 @@ export class TonApiService {
    */
   async getNetworkStatus(): Promise<any> {
     try {
-      const response = await this.tonCenterClient.post('', {
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'getMasterchainInfo'
-      });
+      // Wrap API call with retry logic
+      const response = await this.retryWithBackoff(
+        () => this.tonCenterClient.post('', {
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'getMasterchainInfo'
+        }),
+        'getNetworkStatus'
+      );
 
       return response.data?.result || null;
     } catch (error) {
@@ -214,17 +281,20 @@ export class TonApiService {
    */
   async getJettonInfo(jettonAddress: string): Promise<JettonInfo | null> {
     try {
-      // Try to get jetton data from the contract
-      const response = await this.tonCenterClient.post('', {
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'runGetMethod',
-        params: {
-          address: jettonAddress,
-          method: 'get_jetton_data',
-          stack: []
-        }
-      });
+      // Wrap API call with retry logic
+      const response = await this.retryWithBackoff(
+        () => this.tonCenterClient.post('', {
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'runGetMethod',
+          params: {
+            address: jettonAddress,
+            method: 'get_jetton_data',
+            stack: []
+          }
+        }),
+        'getJettonInfo'
+      );
 
       if (response.data?.result) {
         const stack = response.data.result.stack;

@@ -6,18 +6,18 @@ Welcome to the complete documentation for TON MCP - the most comprehensive Model
 
 ## 📚 Documentation Structure
 
-### `/general` - General Documentation
+### `/general` - Core Documentation
 
-Core documentation about the MCP itself:
+Essential guides for using and understanding TON MCP:
 
+- **[AI_USAGE_GUIDE.md](general/AI_USAGE_GUIDE.md)** ⭐ **START HERE** - Complete guide for AI assistants (18 tools, workflows, best practices)
 - **[COMPLETE_FEATURE_SUMMARY.md](general/COMPLETE_FEATURE_SUMMARY.md)** - Complete overview of all features
 - **[OFFICIAL_TOOLS_INTEGRATION.md](general/OFFICIAL_TOOLS_INTEGRATION.md)** - How we use Blueprint & @telegram-apps
 - **[IMPROVED_ARCHITECTURE.md](general/IMPROVED_ARCHITECTURE.md)** - Architecture improvements and design decisions
-- **[VERIFICATION_CHECKLIST.md](general/VERIFICATION_CHECKLIST.md)** - Verification of all systems
-- **[AI_HELPER_GUIDE.md](general/AI_HELPER_GUIDE.md)** - Guide for AI assistants using this MCP
 - **[HOW_IT_WORKS_FOR_USERS.md](general/HOW_IT_WORKS_FOR_USERS.md)** - User perspective guide
-- **[MCP_INTEGRATION_ANALYSIS.md](general/MCP_INTEGRATION_ANALYSIS.md)** - Integration analysis
 - **[INTEGRATION_QUICKSTART.md](general/INTEGRATION_QUICKSTART.md)** - Quick start for integrations
+- **[MCP_INTEGRATION_ANALYSIS.md](general/MCP_INTEGRATION_ANALYSIS.md)** - Technical integration details
+- **[DEPLOYMENT_GUIDE.md](general/DEPLOYMENT_GUIDE.md)** - Complete deployment guide
 
 ### `/integration_guides` - Integration Guides
 
@@ -35,49 +35,66 @@ How to use TON MCP with different AI tools:
 ### Getting Started
 
 **First time here?**
-1. Read: [COMPLETE_FEATURE_SUMMARY.md](general/COMPLETE_FEATURE_SUMMARY.md)
-2. Follow: [INTEGRATION_QUICKSTART.md](general/INTEGRATION_QUICKSTART.md)
-3. Use: [cursor.md](integration_guides/cursor.md) or [claude_code.md](integration_guides/claude_code.md)
+1. Read: [AI_USAGE_GUIDE.md](general/AI_USAGE_GUIDE.md) - Complete guide for AI assistants
+2. Follow: [INTEGRATION_QUICKSTART.md](general/INTEGRATION_QUICKSTART.md) - Setup instructions
+3. Use: [cursor.md](integration_guides/cursor.md) or [claude_code.md](integration_guides/claude_code.md) - Integration guides
 
 ### Understanding the Architecture
 
 **Want to know how it works?**
 1. [OFFICIAL_TOOLS_INTEGRATION.md](general/OFFICIAL_TOOLS_INTEGRATION.md) - Official tools approach
 2. [IMPROVED_ARCHITECTURE.md](general/IMPROVED_ARCHITECTURE.md) - Architecture details
-3. [AI_HELPER_GUIDE.md](general/AI_HELPER_GUIDE.md) - How AI uses the MCP
+3. [MCP_INTEGRATION_ANALYSIS.md](general/MCP_INTEGRATION_ANALYSIS.md) - Technical details
 
-### Verification & Testing
+### Using the MCP
 
-**Need to verify everything works?**
-1. [VERIFICATION_CHECKLIST.md](general/VERIFICATION_CHECKLIST.md) - Complete checklist
+**How to use TON MCP:**
+1. [AI_USAGE_GUIDE.md](general/AI_USAGE_GUIDE.md) - Complete tool reference (18 tools)
 2. [HOW_IT_WORKS_FOR_USERS.md](general/HOW_IT_WORKS_FOR_USERS.md) - User experience
+3. [user_guide.md](integration_guides/user_guide.md) - General usage
 
-### Integration
+### Deployment
 
-**Integrating with AI tools?**
-1. [Cursor IDE](integration_guides/cursor.md) - Most popular
-2. [Claude Code](integration_guides/claude_code.md) - Alternative
-3. [User Guide](integration_guides/user_guide.md) - General usage
+**Ready to deploy?**
+1. [DEPLOYMENT_GUIDE.md](general/DEPLOYMENT_GUIDE.md) - Complete deployment guide
+2. [OFFICIAL_TOOLS_INTEGRATION.md](general/OFFICIAL_TOOLS_INTEGRATION.md) - Official tools
 
 ---
 
 ## 🚀 What This MCP Provides
 
-### 500+ Documentation Pages
+### 360+ Documentation Pages
 Comprehensive index of docs.ton.org with intelligent search
 
-### 20+ Tools
-- Documentation search
-- Smart contract generation (21 templates)
-- Project scaffolding (official tools)
-- Compilation (Tolk support)
-- Deployment (automated)
-- Monitoring (status checks)
-- Live blockchain data
+### 18 MCP Tools
+- **Documentation & Search** (3 tools)
+  - `search_ton_documentation` - Semantic search
+  - `list_ton_resources` - List resources
+  - `get_specific_ton_resource` - Get guides
+
+- **Live Blockchain Data** (4 tools)
+  - `get_account_info_live` - Account data
+  - `get_transaction_history_live` - Transactions
+  - `get_jetton_info_live` - Token info
+  - `get_network_status_live` - Network stats
+
+- **Code Generation** (5 tools)
+  - `generate_contract_code` - Smart contracts (8 types × 3 languages)
+  - `generate_contract_wrapper` ⭐ NEW! - TypeScript wrappers
+  - `generate_test_file` ⭐ NEW! - Sandbox test files
+  - `generate_frontend_code` - Frontend guidance (official tools)
+  - `compile_tolk_contract` / `validate_tolk_syntax` - Tolk compilation
+
+- **Deployment & Projects** (6 tools)
+  - `create_ton_project` - Project scaffolding (official tools)
+  - `deploy_contract` - Deploy to blockchain
+  - `check_deployment_status` - Verify deployment
+  - `get_deployment_guide` - Complete guides
+  - `generate_deployment_script` - Deployment scripts
 
 ### Official Tools Integration
-- **Blueprint** - Smart contract development
-- **@telegram-apps/create** - Telegram Mini Apps
+- **Blueprint** - Smart contract development (`npm create ton@latest`)
+- **@telegram-apps/create-mini-app** - Telegram Mini Apps
 - AI guidance layer on top
 
 ### Complete Workflows
@@ -88,6 +105,17 @@ Comprehensive index of docs.ton.org with intelligent search
 ---
 
 ## 📖 Documentation by Audience
+
+### For AI Assistants
+
+**I'm an AI using this MCP:**
+1. **[AI_USAGE_GUIDE.md](general/AI_USAGE_GUIDE.md)** ⭐ **START HERE**
+   - Complete guide with all 18 tools
+   - Workflow examples
+   - Best practices
+   - Search strategies
+
+2. [COMPLETE_FEATURE_SUMMARY.md](general/COMPLETE_FEATURE_SUMMARY.md) - All capabilities
 
 ### For End Users
 
@@ -102,19 +130,7 @@ Comprehensive index of docs.ton.org with intelligent search
 1. [IMPROVED_ARCHITECTURE.md](general/IMPROVED_ARCHITECTURE.md) - Architecture
 2. [OFFICIAL_TOOLS_INTEGRATION.md](general/OFFICIAL_TOOLS_INTEGRATION.md) - Design decisions
 3. [MCP_INTEGRATION_ANALYSIS.md](general/MCP_INTEGRATION_ANALYSIS.md) - Integration details
-
-### For AI Assistants
-
-**I'm an AI using this MCP:**
-1. [AI_HELPER_GUIDE.md](general/AI_HELPER_GUIDE.md) - Complete guide
-2. [COMPLETE_FEATURE_SUMMARY.md](general/COMPLETE_FEATURE_SUMMARY.md) - All capabilities
-
-### For Contributors
-
-**I want to contribute:**
-1. [IMPROVED_ARCHITECTURE.md](general/IMPROVED_ARCHITECTURE.md) - Understand architecture
-2. [VERIFICATION_CHECKLIST.md](general/VERIFICATION_CHECKLIST.md) - Testing standards
-3. [integration_guides/development_usage.md](integration_guides/development_usage.md) - Development setup
+4. [integration_guides/development_usage.md](integration_guides/development_usage.md) - Development setup
 
 ---
 
@@ -138,7 +154,7 @@ Comprehensive index of docs.ton.org with intelligent search
 
 1. **Understand System**
    - Read: [COMPLETE_FEATURE_SUMMARY.md](general/COMPLETE_FEATURE_SUMMARY.md)
-   - Learn: All available tools
+   - Learn: All 18 available tools
 
 2. **Build Projects**
    - Try: "Create a Jetton token"
@@ -173,18 +189,21 @@ Comprehensive index of docs.ton.org with intelligent search
 **Smart Contracts:**
 - Overview: [COMPLETE_FEATURE_SUMMARY.md](general/COMPLETE_FEATURE_SUMMARY.md#smart-contract-generation)
 - Official tools: [OFFICIAL_TOOLS_INTEGRATION.md](general/OFFICIAL_TOOLS_INTEGRATION.md#blueprint)
+- AI Guide: [AI_USAGE_GUIDE.md](general/AI_USAGE_GUIDE.md#8-generate_contract_code)
 
 **Telegram Mini Apps:**
 - Overview: [COMPLETE_FEATURE_SUMMARY.md](general/COMPLETE_FEATURE_SUMMARY.md#project-scaffolding)
 - Official tools: [OFFICIAL_TOOLS_INTEGRATION.md](general/OFFICIAL_TOOLS_INTEGRATION.md#telegram-apps)
+- AI Guide: [AI_USAGE_GUIDE.md](general/AI_USAGE_GUIDE.md#11-generate_frontend_code)
 
 **Deployment:**
-- Overview: [COMPLETE_FEATURE_SUMMARY.md](general/COMPLETE_FEATURE_SUMMARY.md#deployment-system)
-- Verification: [VERIFICATION_CHECKLIST.md](general/VERIFICATION_CHECKLIST.md#deployment-tools)
+- Overview: [DEPLOYMENT_GUIDE.md](general/DEPLOYMENT_GUIDE.md)
+- AI Guide: [AI_USAGE_GUIDE.md](general/AI_USAGE_GUIDE.md#-deployment--project-tools-6)
 
 **Documentation Search:**
 - Details: [COMPLETE_FEATURE_SUMMARY.md](general/COMPLETE_FEATURE_SUMMARY.md#documentation--search)
 - How it works: [HOW_IT_WORKS_FOR_USERS.md](general/HOW_IT_WORKS_FOR_USERS.md)
+- AI Guide: [AI_USAGE_GUIDE.md](general/AI_USAGE_GUIDE.md#1-search_ton_documentation)
 
 ### By Question
 
@@ -200,20 +219,21 @@ Comprehensive index of docs.ton.org with intelligent search
 **"How do I use it in Cursor?"**
 → [cursor.md](integration_guides/cursor.md)
 
-**"Is everything working?"**
-→ [VERIFICATION_CHECKLIST.md](general/VERIFICATION_CHECKLIST.md)
-
 **"How does AI use this?"**
-→ [AI_HELPER_GUIDE.md](general/AI_HELPER_GUIDE.md)
+→ [AI_USAGE_GUIDE.md](general/AI_USAGE_GUIDE.md) ⭐
+
+**"How do I deploy?"**
+→ [DEPLOYMENT_GUIDE.md](general/DEPLOYMENT_GUIDE.md)
 
 ---
 
 ## 📊 Documentation Statistics
 
-- **Total Documents**: 12+ comprehensive guides
+- **Total Documents**: 8 comprehensive guides in `/general`
+- **Integration Guides**: 4 guides in `/integration_guides`
 - **Lines of Documentation**: 5000+
-- **Topics Covered**: Installation, Usage, Architecture, Integration, Verification
-- **Audience**: Users, Developers, AI Assistants, Contributors
+- **Topics Covered**: Installation, Usage, Architecture, Integration, Deployment
+- **Audience**: AI Assistants, Users, Developers
 - **Languages**: English (primary)
 
 ---
@@ -261,7 +281,7 @@ Comprehensive index of docs.ton.org with intelligent search
 ### Technical Issues
 
 1. **MCP not working?**
-   - Check: [VERIFICATION_CHECKLIST.md](general/VERIFICATION_CHECKLIST.md)
+   - Check: Integration guide
    - Verify: Installation steps
    - Report: GitHub Issues
 
@@ -311,10 +331,10 @@ Try asking your AI:
 
 This documentation is actively maintained. Last updated sections:
 
-- ✅ **2024-12-22**: Added official tools integration docs
-- ✅ **2024-12-22**: Updated architecture documentation
-- ✅ **2024-12-22**: Added verification checklist
-- ✅ **2024-12-22**: Improved integration guides
+- ✅ **2024-12-22**: Added contract wrapper and test file generation
+- ✅ **2024-12-22**: Updated to 18 tools (was 16)
+- ✅ **2024-12-22**: Cleaned up documentation structure
+- ✅ **2024-12-22**: Moved internal docs to `.cursor/` folder
 
 ---
 
@@ -324,9 +344,9 @@ This documentation is actively maintained. Last updated sections:
 
 **Organized**: Easy to find information
 
-**Updated**: Reflects latest features
+**Updated**: Reflects latest features (v2.2.0)
 
-**Multi-Audience**: For users, developers, AI
+**Multi-Audience**: For AI assistants, users, developers
 
 **Actionable**: Clear next steps
 
@@ -348,7 +368,9 @@ Choose your path:
    → Read [IMPROVED_ARCHITECTURE.md](general/IMPROVED_ARCHITECTURE.md)
 
 4. **Using with AI?**
+   → Check [AI_USAGE_GUIDE.md](general/AI_USAGE_GUIDE.md) ⭐
+
+5. **Using with Cursor?**
    → Check [cursor.md](integration_guides/cursor.md)
 
 **Your complete TON development documentation is here!** 📚✨
-

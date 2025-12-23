@@ -373,29 +373,102 @@ await contract.sendMessage();
   async executeProjectCreation(
     config: ScaffoldConfig,
     targetDirectory: string = process.cwd()
-  ): Promise<{ success: boolean; output: string; error?: string }> {
+  ): Promise<{
+    success: boolean;
+    output: string;
+    error?: string;
+    command?: string;
+  }> {
     try {
       if (config.projectType === "smart-contract") {
-        // Run Blueprint
-        const { stdout, stderr } = await execAsync(
-          `cd ${targetDirectory} && npm create ton@latest ${
-            config.projectName
-          } -- --template ${config.language || "tact"}`
-        );
-        return {
-          success: true,
-          output: stdout,
-        };
+        // Run Blueprint - can be executed programmatically
+        const command = `npm create ton@latest ${config.projectName} -- --yes`;
+        try {
+          const { stdout, stderr } = await execAsync(
+            command,
+            { cwd: targetDirectory, timeout: 60000 } // 60 second timeout
+          );
+          return {
+            success: true,
+            output: stdout || stderr,
+            command,
+          };
+        } catch (execError: any) {
+          // If execution fails, provide manual instructions
+          return {
+            success: false,
+            output: "",
+            error: execError.message,
+            command: `npm create ton@latest ${config.projectName}`,
+          };
+        }
       } else if (config.projectType === "tma") {
-        // Guide user - this tool is interactive
+        // Guide user - @telegram-apps/create-mini-app is interactive
         return {
           success: true,
-          output: `Run this command in your terminal:\nnpx @telegram-apps/create-mini-app@latest\n\nThen follow the prompts to create your TMA.`,
+          output: `**Interactive Tool - Run Manually**
+
+The \`@telegram-apps/create-mini-app\` tool is interactive and requires user input.
+
+**Run this command:**
+\`\`\`bash
+npx @telegram-apps/create-mini-app@latest
+\`\`\`
+
+**Follow the prompts:**
+1. Project name: ${config.projectName}
+2. Template: ${
+            config.framework === "react"
+              ? "React"
+              : config.framework === "next"
+              ? "Next.js"
+              : "Vanilla"
+          }
+3. Package manager: npm
+
+**After creation:**
+\`\`\`bash
+cd ${config.projectName}
+npm install
+npm run dev
+\`\`\``,
+          command: `npx @telegram-apps/create-mini-app@latest`,
         };
       } else {
+        // Full-stack: guide through both tools
         return {
           success: true,
-          output: `Create full-stack project:\n1. mkdir ${config.projectName}\n2. cd ${config.projectName}\n3. npm create ton@latest contracts\n4. npx @telegram-apps/create-mini-app@latest frontend`,
+          output: `**Full-Stack Project Setup**
+
+**Step 1: Create project folder**
+\`\`\`bash
+mkdir ${config.projectName}
+cd ${config.projectName}
+\`\`\`
+
+**Step 2: Create smart contracts (Blueprint)**
+\`\`\`bash
+npm create ton@latest contracts
+cd contracts
+npm install
+cd ..
+\`\`\`
+
+**Step 3: Create frontend (TMA)**
+\`\`\`bash
+npx @telegram-apps/create-mini-app@latest frontend
+# Follow prompts, select ${config.framework} template
+cd frontend
+npm install
+cd ..
+\`\`\`
+
+**Step 4: Connect them**
+- Deploy contracts: \`cd contracts && npm run deploy:testnet\`
+- Copy contract address
+- Update frontend with contract address
+- Test integration`,
+          command: `mkdir ${config.projectName} && cd ${config.projectName} && npm create ton@latest contracts && npx @telegram-apps/create-mini-app@latest frontend`,
         };
       }
     } catch (error: any) {

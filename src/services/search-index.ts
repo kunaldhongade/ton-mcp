@@ -451,12 +451,12 @@ export class SearchIndexService {
         { name: "content", weight: 0.2 },
         { name: "category", weight: 0.05 },
       ],
-      threshold: 0.35, // More strict threshold for better relevance (was 0.4)
+      threshold: 0.5, // More lenient threshold (v2.0.9: increased from 0.35 to fix search)
       includeMatches: true,
       includeScore: true,
       useExtendedSearch: true,
       ignoreLocation: true, // Don't penalize matches based on position
-      minMatchCharLength: 3, // Require at least 3 chars for better matching
+      minMatchCharLength: 2, // Reduced from 3 to allow shorter terms (e.g., "DAO", "NFT")
     };
 
     this.fuseIndex = new Fuse(this.documents, options);
@@ -560,8 +560,8 @@ export class SearchIndexService {
         ) {
           return false;
         }
-        // CRITICAL: Filter out low-relevance results (Fuse score > 0.7 = low relevance)
-        if (result.score && result.score > 0.7) {
+        // CRITICAL: Filter out very low-relevance results (v2.0.9: increased from 0.7 to 0.75)
+        if (result.score && result.score > 0.75) {
           return false;
         }
         return true;

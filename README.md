@@ -350,7 +350,7 @@ console.log('✅ Server loads successfully');
 
 ## 🤖 AI Helper Guide
 
-**Critical**: AI assistants must read `AI_HELPER_GUIDE.md` to understand how to effectively use this MCP server. This guide contains:
+**Critical**: AI assistants must read `docs/general/AI_USAGE_GUIDE.md` to understand how to effectively use this MCP server. This guide contains:
 
 - **Complete tool documentation** with usage patterns
 - **Development workflow guidance** for TON projects
@@ -1617,7 +1617,7 @@ Users can now integrate this MCP server and get:
 
 ### **For AI Assistants**
 
-**📘 [AI Usage Guide](./AI_USAGE_GUIDE.md)** - Complete guide for AI assistants on how to use TON MCP at its fullest potential.
+**📘 [AI Usage Guide](./docs/general/AI_USAGE_GUIDE.md)** - Complete guide for AI assistants on how to use TON MCP at its fullest potential.
 
 This comprehensive guide includes:
 
