@@ -294,5 +294,16 @@ console.log(
 console.log(
   "   You can also try: npm publish --ignore-scripts (skips this validation)"
 );
+console.log("");
 
-process.exit(0);
+// Add clear completion markers
+console.log("=".repeat(60));
+console.log("✅ PREPARE-PUBLISH SCRIPT COMPLETED SUCCESSFULLY");
+console.log("=".repeat(60));
+console.log("");
+
+// Ensure all output is flushed before exiting
+// Using a small timeout to let stdout flush completely
+setTimeout(() => {
+  // Script will exit naturally after this
+}, 100);
