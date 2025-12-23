@@ -162,19 +162,35 @@ echo ""
 echo -e "${YELLOW}Current version in package.json: ${CURRENT_VERSION}${NC}"
 echo -e "${YELLOW}Bumping version type: ${VERSION_TYPE}${NC}"
 echo ""
+echo -e "${BLUE}Running npm version (this will run tests and build)...${NC}"
+echo ""
 
-NEW_VERSION=$(npm version $VERSION_TYPE)
+NEW_VERSION=$(npm version $VERSION_TYPE 2>&1)
+
+# Check if npm version succeeded
+if [ $? -ne 0 ]; then
+    echo ""
+    echo -e "${RED}❌ npm version failed${NC}"
+    echo -e "${RED}${NEW_VERSION}${NC}"
+    exit 1
+fi
 
 echo ""
+echo ""
+echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}✅ Version updated in package.json!${NC}"
 echo -e "${GREEN}   ${CURRENT_VERSION} → ${NEW_VERSION}${NC}"
-echo ""
 echo -e "${GREEN}✅ Git commit created: '${NEW_VERSION}'${NC}"
 echo -e "${GREEN}✅ Git tag created: ${NEW_VERSION}${NC}"
+echo -e "${GREEN}========================================${NC}"
+echo ""
 
 # Step 5: Push version tag to GitHub
 echo ""
+echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}🏷️  Step 5: Pushing version tag to GitHub...${NC}"
+echo -e "${BLUE}========================================${NC}"
+echo ""
 read -p "Push ${NEW_VERSION} tag to GitHub? (Y/n): " PUSH_TAG
 PUSH_TAG=${PUSH_TAG:-y}  # Default to 'y' if empty
 
@@ -190,7 +206,10 @@ fi
 
 # Step 6: Publish to npm
 echo ""
+echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}📦 Step 6: Publishing to npm...${NC}"
+echo -e "${BLUE}========================================${NC}"
+echo ""
 
 # Check npm login status FIRST
 echo -e "${BLUE}🔐 Checking npm login status...${NC}"
