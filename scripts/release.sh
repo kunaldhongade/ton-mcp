@@ -92,9 +92,10 @@ if [[ -n $(git status -s) ]]; then
     git status -s
     echo ""
     
-    read -p "Add and commit all changes? (y/n): " COMMIT_CHANGES
+    read -p "Add and commit all changes? (Y/n): " COMMIT_CHANGES
+    COMMIT_CHANGES=${COMMIT_CHANGES:-y}  # Default to 'y' if empty
     
-    if [ "$COMMIT_CHANGES" = "y" ]; then
+    if [ "$COMMIT_CHANGES" = "y" ] || [ "$COMMIT_CHANGES" = "Y" ]; then
         # Add all files
         echo ""
         echo -e "${BLUE}📁 Adding all files to git...${NC}"
@@ -140,9 +141,10 @@ fi
 # Step 3: Push current commits to GitHub
 echo ""
 echo -e "${BLUE}🚀 Step 3: Pushing commits to GitHub...${NC}"
-read -p "Push to GitHub now? (y/n): " PUSH_NOW
+read -p "Push to GitHub now? (Y/n): " PUSH_NOW
+PUSH_NOW=${PUSH_NOW:-y}  # Default to 'y' if empty
 
-if [ "$PUSH_NOW" = "y" ]; then
+if [ "$PUSH_NOW" = "y" ] || [ "$PUSH_NOW" = "Y" ]; then
     git push origin main
     echo -e "${GREEN}✅ Pushed to GitHub${NC}"
 else
@@ -169,9 +171,10 @@ echo -e "${GREEN}✅ Git tag created: ${NEW_VERSION}${NC}"
 # Step 5: Push version tag to GitHub
 echo ""
 echo -e "${BLUE}🏷️  Step 5: Pushing version tag to GitHub...${NC}"
-read -p "Push ${NEW_VERSION} tag to GitHub? (y/n): " PUSH_TAG
+read -p "Push ${NEW_VERSION} tag to GitHub? (Y/n): " PUSH_TAG
+PUSH_TAG=${PUSH_TAG:-y}  # Default to 'y' if empty
 
-if [ "$PUSH_TAG" = "y" ]; then
+if [ "$PUSH_TAG" = "y" ] || [ "$PUSH_TAG" = "Y" ]; then
     git push origin main
     git push --tags
     echo -e "${GREEN}✅ Pushed ${NEW_VERSION} to GitHub with tags${NC}"
@@ -184,9 +187,10 @@ fi
 # Step 6: Publish to npm
 echo ""
 echo -e "${BLUE}📦 Step 6: Publishing to npm...${NC}"
-read -p "Publish to npm? (y/n): " PUBLISH_NPM
+read -p "Publish to npm? (Y/n): " PUBLISH_NPM
+PUBLISH_NPM=${PUBLISH_NPM:-y}  # Default to 'y' if empty
 
-if [ "$PUBLISH_NPM" = "y" ]; then
+if [ "$PUBLISH_NPM" = "y" ] || [ "$PUBLISH_NPM" = "Y" ]; then
     # Check if logged in
     npm whoami > /dev/null 2>&1
     if [ $? -ne 0 ]; then
@@ -225,10 +229,10 @@ echo ""
 echo -e "${GREEN}✅ Version: ${NEW_VERSION}${NC}"
 echo -e "${GREEN}✅ package.json version: ${FINAL_VERSION}${NC}"
 echo -e "${GREEN}✅ Built: dist/${NC}"
-if [ "$PUSH_NOW" = "y" ] || [ "$PUSH_TAG" = "y" ]; then
+if [ "$PUSH_NOW" = "y" ] || [ "$PUSH_NOW" = "Y" ] || [ "$PUSH_TAG" = "y" ] || [ "$PUSH_TAG" = "Y" ]; then
     echo -e "${GREEN}✅ Pushed to GitHub${NC}"
 fi
-if [ "$PUBLISH_NPM" = "y" ]; then
+if [ "$PUBLISH_NPM" = "y" ] || [ "$PUBLISH_NPM" = "Y" ]; then
     echo -e "${GREEN}✅ Published to npm${NC}"
 fi
 echo ""
@@ -236,12 +240,12 @@ echo ""
 # Next steps
 echo -e "${YELLOW}📋 Next steps:${NC}"
 echo ""
-if [ "$PUSH_TAG" = "y" ]; then
+if [ "$PUSH_TAG" = "y" ] || [ "$PUSH_TAG" = "Y" ]; then
     echo "1. Create GitHub release:"
     echo "   https://github.com/kunaldhongade/ton-mcp/releases/new"
     echo ""
 fi
-if [ "$PUBLISH_NPM" = "y" ]; then
+if [ "$PUBLISH_NPM" = "y" ] || [ "$PUBLISH_NPM" = "Y" ]; then
     echo "2. Verify npm package:"
     echo "   npm view ton-mcp"
     echo ""

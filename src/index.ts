@@ -12,7 +12,18 @@ import {
   McpError,
   ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
+import { readFileSync } from "fs";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 import { z } from "zod";
+
+// Get version from package.json
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(
+  readFileSync(join(__dirname, "..", "package.json"), "utf-8")
+);
+const VERSION = packageJson.version;
 
 import { config } from "./config.js";
 import { deploymentService } from "./services/deployment.js";
@@ -42,7 +53,7 @@ class TonMcpServer {
     this.server = new Server(
       {
         name: "ton-mcp",
-        version: "1.0.0",
+        version: VERSION,
       },
       {
         capabilities: {
@@ -1542,43 +1553,127 @@ export { TonMcpServer };
 const args = process.argv.slice(2);
 
 if (args.includes("--help") || args.includes("-h")) {
-  console.log(`TON MCP Server v1.0.0
-======================
+  console.log(`
+╔════════════════════════════════════════════════════════════════╗
+║                  TON MCP Server v${VERSION}                     ║
+║        Complete Model Context Protocol for TON Blockchain      ║
+╚════════════════════════════════════════════════════════════════╝
 
-A comprehensive Model Context Protocol server for TON blockchain development.
+📖 DESCRIPTION:
+   Production-grade MCP server providing AI assistants with comprehensive
+   TON blockchain development tools, documentation, and live blockchain data.
 
-USAGE:
-  ton-mcp                    Start the MCP server (stdio mode)
-  ton-mcp --help, -h         Show this help message
+🚀 USAGE:
+   ton-mcp              Start MCP server (stdio mode for AI integration)
+   ton-mcp --help       Show this help message
 
-DESCRIPTION:
-  This MCP server provides AI assistants with comprehensive TON blockchain development tools,
-  including documentation search, live blockchain data, code generation, and development guidance.
+✨ CAPABILITIES:
 
-FEATURES:
-  📚 146+ indexed TON documentation pages
-  🔗 Live TON blockchain data access
-  ⚡ Production-ready code generation
-  📱 Telegram Mini Apps support
-  🚀 End-to-end dApp development
+   📚 Documentation (360+ pages indexed)
+      • Complete docs.ton.org crawl with smart search
+      • Tact, FunC, and Tolk language guides
+      • Telegram Mini Apps (TMA) documentation
+      • TON Connect and Jetton standards
 
-CONFIGURATION:
-  Set these environment variables:
-  - TON_NETWORK: 'mainnet' or 'testnet' (default: testnet)
-  - TON_API_KEY: Your TON Center API key (required)
-  - TON_API_KEY_ENHANCED: Your TON API key (optional)
-  - DEBUG: 'true' or 'false' (default: false)
+   🛠️  16 MCP Tools Available:
+      • search_ton_documentation       - Semantic search through all TON docs
+      • get_account_info_live         - Live blockchain account data
+      • get_transaction_history_live  - Recent transaction queries
+      • get_jetton_info_live         - Token information
+      • get_network_status_live      - Network statistics
+      • generate_contract_code       - Smart contracts (Tact/FunC/Tolk)
+      • generate_frontend_code       - React/Vanilla JS integration
+      • compile_tolk_contract        - Tolk → BOC compilation
+      • validate_tolk_syntax         - Tolk code validation
+      • generate_deployment_script   - Deployment automation
+      • create_ton_project          - Project scaffolding guidance
+      • deploy_contract             - Deploy to testnet/mainnet
+      • check_deployment_status     - Verify deployments
+      • get_deployment_guide        - Complete deployment docs
+      • list_ton_resources          - Available resource files
+      • get_specific_ton_resource   - Fetch specific guides
 
-INTEGRATION:
-  - Cursor: Add as MCP server in settings
-  - Claude Code: Configure in mcp.json
-  - Other MCP-compatible tools
+   💬 3 AI Prompts:
+      • ton_development_guidance_prompt  - General TON development help
+      • create_ton_smart_contract       - Smart contract creation workflow
+      • create_ton_dapp                - DApp building guidance
 
-EXAMPLES:
-  ton-mcp                                    # Start MCP server
-  ton-mcp --help                            # Show this help
+   📂 4 Resource Categories:
+      • smart-contracts/  - Contract templates, Tolk guide, TVM docs
+      • how-to/          - Complete workflows, official tools guide
+      • deployment/      - Deployment guide with cost estimates
+      • tma/            - Telegram Mini App creation
+      • frontend/        - Frontend integration guides
 
-For more information, visit: https://github.com/kunaldhongade/ton-mcp
+   🎯 Key Features:
+      ✅ Tolk language support (newest TON language)
+      ✅ 7 contract types (counter, jetton, NFT, DAO, AMM, staking, multisig)
+      ✅ Official tool integration (Blueprint, @telegram-apps)
+      ✅ Complete deployment system (testnet + mainnet)
+      ✅ Live blockchain queries (accounts, transactions, Jettons)
+      ✅ Project scaffolding with best practices
+      ✅ Comprehensive error messages with troubleshooting
+
+⚙️  CONFIGURATION:
+   Environment variables (optional):
+   • TON_NETWORK          mainnet | testnet (default: testnet)
+   • TON_API_KEY          Your TON Center API key
+   • TON_API_KEY_ENHANCED Your enhanced API key (optional)
+   • DEBUG                true | false (default: false)
+
+🔌 INTEGRATION:
+
+   For Cursor IDE:
+   1. Open Settings → Cursor Settings → MCP
+   2. Add server:
+      {
+        "mcpServers": {
+          "ton-mcp": {
+            "command": "ton-mcp",
+            "env": {
+              "TON_NETWORK": "testnet",
+              "DEBUG": "true"
+            }
+          }
+        }
+      }
+   3. Restart Cursor
+   4. Ask: "Search TON docs for Tact smart contracts"
+
+   For Claude Code:
+   Configure in your mcp.json with the same format above.
+
+📚 DOCUMENTATION:
+   • GitHub:  https://github.com/kunaldhongade/ton-mcp
+   • npm:     https://www.npmjs.com/package/ton-mcp
+   • AI Guide: See AI_USAGE_GUIDE.md in package
+
+💡 EXAMPLES:
+   Ask your AI assistant:
+   • "Search TON documentation for Jetton creation"
+   • "Generate a Tact counter smart contract"
+   • "How do I deploy a contract to testnet?"
+   • "Create a Telegram Mini App with TON Connect"
+   • "Show me the Tolk language guide"
+   • "Get live account info for EQC8rU..."
+
+🎉 QUICK START:
+   1. Install: npm install -g ton-mcp
+   2. Configure in Cursor/Claude (see INTEGRATION above)
+   3. Restart your AI tool
+   4. Start asking TON development questions!
+
+📊 STATS:
+   • Tools: 16        • Prompts: 3
+   • Resources: 12+   • Documentation: 360+ pages
+   • Languages: Tact, FunC, Tolk
+   • Networks: Testnet & Mainnet
+
+💬 SUPPORT:
+   • Issues: https://github.com/kunaldhongade/ton-mcp/issues
+   • TON Dev: https://t.me/tondev_eng
+
+Built with ❤️  for the TON ecosystem
 `);
   process.exit(0);
 }
