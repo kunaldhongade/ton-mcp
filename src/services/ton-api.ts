@@ -333,19 +333,19 @@ export class TonApiService {
 
   private mapTransaction(tx: any): TonTransaction {
     return {
-      hash: tx.transaction_id.hash,
-      lt: tx.transaction_id.lt,
-      account: tx.address.account_address,
-      success: tx.success,
-      utime: tx.utime,
-      orig_status: tx.orig_status,
-      end_status: tx.end_status,
-      total_fees: tx.total_fees,
-      transaction_type: tx.transaction_type || 'regular',
-      state_update: tx.state_update,
-      description: tx.description,
-      in_msg: tx.in_msg,
-      out_msgs: tx.out_msgs || []
+      hash: tx?.transaction_id?.hash || tx?.hash || '',
+      lt: tx?.transaction_id?.lt || tx?.lt || '0',
+      account: tx?.address?.account_address || tx?.account || '',
+      success: tx?.success ?? false,
+      utime: tx?.utime || 0,
+      orig_status: tx?.orig_status || 'unknown',
+      end_status: tx?.end_status || 'unknown',
+      total_fees: tx?.total_fees || '0',
+      transaction_type: tx?.transaction_type || 'regular',
+      state_update: tx?.state_update || {},
+      description: tx?.description || 'No description',
+      in_msg: tx?.in_msg || null,
+      out_msgs: tx?.out_msgs || []
     };
   }
 }

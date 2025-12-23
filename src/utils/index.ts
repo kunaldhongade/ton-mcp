@@ -1,8 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export function getAvailableHowToResources(): string[] {
-  const howToDir = path.join(process.cwd(), 'src', 'resources', 'how-to');
+  // Use __dirname to find resources relative to this file, not cwd
+  const howToDir = path.join(__dirname, '..', 'resources', 'how-to');
   try {
     const files = fs.readdirSync(howToDir);
     return files
@@ -14,7 +20,8 @@ export function getAvailableHowToResources(): string[] {
 }
 
 export async function readMarkdownFromDirectory(directory: string, filename: string): Promise<string> {
-  const filePath = path.join(process.cwd(), 'src', 'resources', directory, `${filename}.md`);
+  // Use __dirname to find resources relative to this file, not cwd
+  const filePath = path.join(__dirname, '..', 'resources', directory, `${filename}.md`);
   try {
     return fs.readFileSync(filePath, 'utf-8');
   } catch {
@@ -26,7 +33,8 @@ export async function readAllMarkdownFromDirectories(directories: string[]): Pro
   let content = '';
 
   for (const directory of directories) {
-    const dirPath = path.join(process.cwd(), 'src', 'resources', directory);
+    // Use __dirname to find resources relative to this file, not cwd
+    const dirPath = path.join(__dirname, '..', 'resources', directory);
 
     try {
       const files = fs.readdirSync(dirPath);

@@ -964,6 +964,253 @@ contract JettonMaster with Deployable, Ownable {
     }
 }`;
         break;
+
+      case "nft":
+        code = `import "@stdlib/deploy";
+import "@stdlib/ownable";
+
+contract NFTCollection with Deployable, Ownable {
+    nextItemIndex: Int = 0;
+    collectionContent: String;
+    
+    init(collectionContent: String) {
+        self.collectionContent = collectionContent;
+    }
+    
+    receive("mint") {
+        let nftItemAddress = self.getNftItemAddress(self.nextItemIndex);
+        // Deploy NFT item
+        self.nextItemIndex += 1;
+    }
+    
+    get fun getNftItemAddress(index: Int): Address {
+        // Calculate NFT item address based on index
+        return myAddress();
+    }
+    
+    get fun getCollectionData(): CollectionData {
+        return CollectionData{
+            nextItemIndex: self.nextItemIndex,
+            collectionContent: self.collectionContent,
+            ownerAddress: self.owner
+        };
+    }
+}`;
+        break;
+
+      case "dao":
+        code = `import "@stdlib/deploy";
+
+contract SimpleDAO with Deployable {
+    totalVotes: Int = 0;
+    proposalCount: Int = 0;
+    members: map<Address, Int>;
+    
+    init() {}
+    
+    receive("join") {
+        let sender = sender();
+        self.members.set(sender, 1);
+    }
+    
+    receive("createProposal") {
+        self.proposalCount += 1;
+    }
+    
+    receive("vote") {
+        let sender = sender();
+        require(self.members.get(sender) != null, "Not a member");
+        self.totalVotes += 1;
+    }
+    
+    get fun getProposalCount(): Int {
+        return self.proposalCount;
+    }
+    
+    get fun getTotalVotes(): Int {
+        return self.totalVotes;
+    }
+}`;
+        break;
+
+      case "staking":
+        code = `import "@stdlib/deploy";
+
+contract StakingPool with Deployable {
+    totalStaked: Int = 0;
+    rewardRate: Int = 100; // 1% per period
+    stakes: map<Address, Int>;
+    
+    init() {}
+    
+    receive("stake") {
+        let sender = sender();
+        let amount = context().value;
+        
+        let currentStake = self.stakes.get(sender);
+        if (currentStake == null) {
+            self.stakes.set(sender, amount);
+        } else {
+            self.stakes.set(sender, currentStake!! + amount);
+        }
+        
+        self.totalStaked += amount;
+    }
+    
+    receive("unstake") {
+        let sender = sender();
+        let staked = self.stakes.get(sender);
+        require(staked != null, "No stake found");
+        
+        // Calculate rewards
+        let reward = (staked!! * self.rewardRate) / 10000;
+        let totalAmount = staked!! + reward;
+        
+        // Send back stake + reward
+        send(SendParameters{
+            to: sender,
+            value: totalAmount,
+            mode: SendRemainingValue
+        });
+        
+        self.stakes.set(sender, null);
+        self.totalStaked -= staked!!;
+    }
+    
+    get fun getStake(address: Address): Int {
+        let stake = self.stakes.get(address);
+        return stake != null ? stake!! : 0;
+    }
+    
+    get fun getTotalStaked(): Int {
+        return self.totalStaked;
+    }
+}`;
+        break;
+
+      case "amm":
+        code = `import "@stdlib/deploy";
+
+contract SimpleAMM with Deployable {
+    reserveA: Int = 0;
+    reserveB: Int = 0;
+    totalLiquidity: Int = 0;
+    liquidity: map<Address, Int>;
+    
+    init() {}
+    
+    receive("addLiquidity") {
+        let sender = sender();
+        let amount = context().value;
+        
+        // Simple liquidity calculation
+        let liquidityMinted = amount;
+        
+        let currentLiquidity = self.liquidity.get(sender);
+        if (currentLiquidity == null) {
+            self.liquidity.set(sender, liquidityMinted);
+        } else {
+            self.liquidity.set(sender, currentLiquidity!! + liquidityMinted);
+        }
+        
+        self.totalLiquidity += liquidityMinted;
+        self.reserveA += amount / 2;
+        self.reserveB += amount / 2;
+    }
+    
+    receive("swap") {
+        let sender = sender();
+        let amountIn = context().value;
+        
+        // Simple constant product formula: x * y = k
+        let amountOut = (amountIn * self.reserveB) / (self.reserveA + amountIn);
+        
+        self.reserveA += amountIn;
+        self.reserveB -= amountOut;
+        
+        send(SendParameters{
+            to: sender,
+            value: amountOut,
+            mode: SendRemainingValue
+        });
+    }
+    
+    get fun getReserves(): Reserves {
+        return Reserves{
+            reserveA: self.reserveA,
+            reserveB: self.reserveB
+        };
+    }
+    
+    get fun getLiquidity(address: Address): Int {
+        let liq = self.liquidity.get(address);
+        return liq != null ? liq!! : 0;
+    }
+}`;
+        break;
+
+      case "multisig":
+        code = `import "@stdlib/deploy";
+
+contract MultiSigWallet with Deployable {
+    owners: map<Address, Bool>;
+    ownerCount: Int = 0;
+    required: Int;
+    transactionCount: Int = 0;
+    confirmations: map<Int, map<Address, Bool>>;
+    
+    init(owners: Address[], required: Int) {
+        self.required = required;
+        // Add owners
+        repeat(owners.size()) {
+            let owner = owners.get(i);
+            self.owners.set(owner, true);
+            self.ownerCount += 1;
+        }
+    }
+    
+    receive("submitTransaction") {
+        let sender = sender();
+        require(self.owners.get(sender) == true, "Not an owner");
+        
+        self.transactionCount += 1;
+        let txId = self.transactionCount;
+        
+        // Auto-confirm by submitter
+        self.confirmTransaction(txId, sender);
+    }
+    
+    receive("confirmTransaction") {
+        let sender = sender();
+        let txId = context().value; // Simplified
+        require(self.owners.get(sender) == true, "Not an owner");
+        
+        self.confirmTransaction(txId, sender);
+    }
+    
+    fun confirmTransaction(txId: Int, owner: Address) {
+        // Add confirmation logic
+        let txConfirms = self.confirmations.get(txId);
+        if (txConfirms == null) {
+            let newMap: map<Address, Bool> = emptyMap();
+            newMap.set(owner, true);
+            self.confirmations.set(txId, newMap);
+        }
+    }
+    
+    get fun isOwner(address: Address): Bool {
+        return self.owners.get(address) == true;
+    }
+    
+    get fun getRequired(): Int {
+        return self.required;
+    }
+}`;
+        break;
+
+      default:
+        code = `// Contract type "${contract_type}" not supported yet.\n// Supported types: counter, wallet, jetton, nft, dao, staking, amm, multisig`;
+        break;
     }
 
     return {
@@ -1669,11 +1916,12 @@ if (args.includes("--help") || args.includes("-h")) {
    • Languages: Tact, FunC, Tolk
    • Networks: Testnet & Mainnet
 
-💬 SUPPORT:
-   • Issues: https://github.com/kunaldhongade/ton-mcp/issues
-   • TON Dev: https://t.me/tondev_eng
+💬 CONTACT & SUPPORT:
+   • GitHub Issues: https://github.com/kunaldhongade/ton-mcp/issues
+   • Telegram: https://t.me/bossblock
+   • Twitter/X: @kunaldhongade
 
-Built with ❤️  for the TON ecosystem
+Built with ❤️ by Kunal Dhongade for the TON ecosystem
 `);
   process.exit(0);
 }

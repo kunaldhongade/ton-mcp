@@ -226,11 +226,11 @@ Comprehensive index of docs.ton.org with intelligent search
 - [Blueprint Guide](https://github.com/ton-org/blueprint)
 - [Telegram Mini Apps](https://docs.ton.org/develop/dapps/telegram-apps/)
 
-### Community
+### Contact & Support
 
-- [TON Dev Chat](https://t.me/tondev_eng)
-- [TON Overflow](https://answers.ton.org)
-- [GitHub Discussions](https://github.com/ton-blockchain/ton/discussions)
+- **Telegram:** [https://t.me/bossblock](https://t.me/bossblock)
+- **Twitter/X:** [@kunaldhongade](https://twitter.com/kunaldhongade)
+- **GitHub Issues:** [kunaldhongade/ton-mcp](https://github.com/kunaldhongade/ton-mcp/issues)
 
 ### Tools
 
@@ -247,7 +247,7 @@ Comprehensive index of docs.ton.org with intelligent search
 1. **Can't find what you need?**
    - Check: Table of contents above
    - Search: Use Ctrl+F in this file
-   - Ask: TON Dev Chat
+   - Contact: https://t.me/bossblock
 
 2. **Documentation unclear?**
    - File issue: [GitHub Issues](https://github.com/kunaldhongade/ton-mcp/issues)
@@ -268,7 +268,7 @@ Comprehensive index of docs.ton.org with intelligent search
 2. **Integration problems?**
    - Read: Specific integration guide
    - Try: Basic troubleshooting
-   - Ask: Community
+   - Contact: https://t.me/bossblock or @kunaldhongade
 
 ---
 

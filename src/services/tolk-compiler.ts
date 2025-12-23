@@ -50,8 +50,17 @@ export class TolkCompilerService {
       } catch (error) {
         return {
           success: false,
-          error:
-            "Tolk compiler not found. Install it from: https://github.com/ton-blockchain/tolk",
+          error: `❌ Tolk compiler not installed on this system.
+
+**To install Tolk:**
+1. Visit: https://github.com/ton-blockchain/tolk
+2. Follow installation instructions for your OS
+3. Verify installation: \`tolk --version\`
+
+**Alternative:** Use Tact language instead
+- Change language parameter to "tact" 
+- Tact is production-ready and widely supported
+- Example: generate_contract_code(contract_type="counter", language="tact")`,
         };
       }
 
@@ -100,6 +109,25 @@ export class TolkCompilerService {
    */
   async validateTolk(sourceCode: string): Promise<CompilationResult> {
     try {
+      // Check if tolk compiler is installed first
+      try {
+        await execAsync("tolk --version");
+      } catch (error) {
+        return {
+          success: false,
+          error: `❌ Tolk compiler not installed.
+
+**Install Tolk to validate syntax:**
+• GitHub: https://github.com/ton-blockchain/tolk
+• Or use Tact language (no compiler needed for syntax check)
+
+**For now, you can:**
+1. Review the code manually
+2. Use Tact instead (language="tact")
+3. Install Tolk compiler for validation`,
+        };
+      }
+
       const sourceFile = path.join(this.tempDir, "validate.tolk");
       fs.writeFileSync(sourceFile, sourceCode);
 
@@ -107,10 +135,23 @@ export class TolkCompilerService {
 
       return {
         success: !stderr,
-        output: stdout || "Syntax is valid",
+        output: stdout || "✅ Syntax is valid! Code is ready to compile.",
         error: stderr || undefined,
       };
     } catch (error: any) {
+      // Check if it's a "command not found" error
+      if (error.message.includes('tolk') && (error.message.includes('not found') || error.message.includes('ENOENT'))) {
+        return {
+          success: false,
+          error: `❌ Tolk compiler not found in system PATH.
+
+**Quick fix:** Install Tolk compiler
+• https://github.com/ton-blockchain/tolk
+
+**Alternative:** Use Tact instead (fully supported, no external compiler needed)`,
+        };
+      }
+      
       return {
         success: false,
         error: `Validation failed: ${error.message}`,

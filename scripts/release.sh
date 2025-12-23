@@ -73,8 +73,11 @@ esac
 echo -e "${GREEN}✅ Next version will be: ${NEXT_VERSION}${NC}"
 echo ""
 
-# Step 1: Build
+# Step 1: Clean and Build
 echo -e "${BLUE}📦 Step 1: Building project...${NC}"
+echo "  🧹 Cleaning old build..."
+rm -rf dist
+echo "  🔨 Compiling TypeScript..."
 npm run build
 
 if [ $? -ne 0 ]; then
@@ -82,6 +85,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 echo -e "${GREEN}✅ Build successful${NC}"
+echo -e "${GREEN}✅ dist/ folder ready${NC}"
 
 # Step 2: Check git status and commit
 echo ""
@@ -187,16 +191,28 @@ fi
 # Step 6: Publish to npm
 echo ""
 echo -e "${BLUE}📦 Step 6: Publishing to npm...${NC}"
+
+# Check npm login status FIRST
+echo -e "${BLUE}🔐 Checking npm login status...${NC}"
+NPM_USER=$(npm whoami 2>&1)
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ Not logged in to npm${NC}"
+    echo ""
+    echo -e "${YELLOW}Please log in to npm to continue:${NC}"
+    echo "  1. Run: ${BLUE}npm login${NC}"
+    echo "  2. Enter username: ${BLUE}kunaldhongade${NC}"
+    echo "  3. Enter password and OTP (if enabled)"
+    echo ""
+    echo -e "${YELLOW}After logging in, run this script again.${NC}"
+    exit 1
+else
+    echo -e "${GREEN}✅ Logged in as: ${NPM_USER}${NC}"
+fi
+
 read -p "Publish to npm? (Y/n): " PUBLISH_NPM
 PUBLISH_NPM=${PUBLISH_NPM:-y}  # Default to 'y' if empty
 
 if [ "$PUBLISH_NPM" = "y" ] || [ "$PUBLISH_NPM" = "Y" ]; then
-    # Check if logged in
-    npm whoami > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        echo -e "${YELLOW}⚠️  Not logged in to npm${NC}"
-        npm login
-    fi
     
     # Publish
     echo ""
@@ -254,10 +270,9 @@ if [ "$PUBLISH_NPM" = "y" ] || [ "$PUBLISH_NPM" = "Y" ]; then
     echo "   ton-mcp --help"
     echo ""
 fi
-echo "4. Announce release:"
-echo "   - TON Dev Chat: https://t.me/tondev_eng"
-echo "   - Twitter/X"
-echo "   - Reddit r/toncoin"
+echo "4. Share your release:"
+echo "   - Twitter/X: @kunaldhongade"
+echo "   - Telegram: https://t.me/bossblock"
 echo ""
 
 echo -e "${GREEN}🚀 Your TON MCP ${NEW_VERSION} is released!${NC}"

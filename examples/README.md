@@ -356,9 +356,9 @@ After testing, you should see:
    ```
 
 2. **Share Results**
-   - Post to TON Dev community
-   - Share test results
-   - Get feedback
+   - Share on Twitter/X: @kunaldhongade
+   - Contact on Telegram: https://t.me/bossblock
+   - Get feedback via GitHub Issues
 
 3. **Continuous Testing**
    - Test with new TON features
@@ -459,8 +459,9 @@ If something doesn't work:
    node test-mcp-server.js
    ```
 
-4. **Ask community:**
-   - TON Dev Chat: https://t.me/tondev_eng
+4. **Get Help:**
+   - Telegram: https://t.me/bossblock
+   - Twitter/X: @kunaldhongade
    - GitHub Issues: https://github.com/kunaldhongade/ton-mcp/issues
 
 ---
